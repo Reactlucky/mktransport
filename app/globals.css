@@ -1,26 +1,115 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f8fa;
+  --foreground: #1a1d23;
+  --card: #ffffff;
+  --card-foreground: #1a1d23;
+  --muted: #eef1f5;
+  --muted-foreground: #5c6573;
+  --border: #dce1e8;
+  --input: #dce1e8;
+  --primary: #1b4f8a;
+  --primary-foreground: #ffffff;
+  --primary-hover: #163f6e;
+  --accent: #e8f0f8;
+  --accent-foreground: #1b4f8a;
+  --success: #1a7a4c;
+  --success-muted: #e6f5ee;
+  --warning: #9a6b12;
+  --warning-muted: #fef6e6;
+  --danger: #b42318;
+  --danger-muted: #fef3f2;
+  --ring: #1b4f8a;
+  --sidebar: #0f2744;
+  --sidebar-foreground: #e8eef6;
+  --sidebar-muted: #8fa3bc;
+  --sidebar-active: #1b4f8a;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+}
+
+.dark {
+  --background: #0c1017;
+  --foreground: #e8ecf2;
+  --card: #151b26;
+  --card-foreground: #e8ecf2;
+  --muted: #1c2433;
+  --muted-foreground: #9aa6b8;
+  --border: #2a3447;
+  --input: #2a3447;
+  --primary: #4d8fd6;
+  --primary-foreground: #0c1017;
+  --primary-hover: #6aa3e0;
+  --accent: #1a2d45;
+  --accent-foreground: #9ec5ef;
+  --success: #3dd68c;
+  --success-muted: #123025;
+  --warning: #f5c14a;
+  --warning-muted: #2e2510;
+  --danger: #f97066;
+  --danger-muted: #2f1513;
+  --ring: #4d8fd6;
+  --sidebar: #0a0e14;
+  --sidebar-foreground: #e8ecf2;
+  --sidebar-muted: #7d8ca3;
+  --sidebar-active: #1e3a5f;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-success-muted: var(--success-muted);
+  --color-warning: var(--warning);
+  --color-warning-muted: var(--warning-muted);
+  --color-danger: var(--danger);
+  --color-danger-muted: var(--danger-muted);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-active: var(--sidebar-active);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --shadow-sm: var(--shadow);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
 }

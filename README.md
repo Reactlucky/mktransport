@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MK Transport Management System
 
-## Getting Started
+Simple, fast transport management for a small fleet. Built to replace notebook-based daily trip entry.
 
-First, run the development server:
+## Stack
+
+- Next.js (App Router) + TypeScript
+- Tailwind CSS
+- Supabase (Auth + PostgreSQL + RLS)
+- TanStack Query
+- Vercel-compatible
+
+## Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure environment
+
+Copy `.env.example` to `.env.local` and fill in your Supabase project values:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_publishable_key
+```
+
+### 3. Database
+
+In the Supabase SQL Editor, run in order:
+
+1. [`supabase/migrations/001_initial.sql`](supabase/migrations/001_initial.sql) — schema, indexes, RLS, report RPCs
+2. [`supabase/seed.sql`](supabase/seed.sql) — sample trucks, customers, drivers, trips
+
+### 4. Auth user
+
+Create a user in Supabase Authentication (email/password) for signing in.
+
+### 5. Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## App routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Path | Description |
+|---|---|
+| `/` | Landing page |
+| `/login` | Sign in |
+| `/dashboard` | Operational overview |
+| `/dashboard/trips` | Trip list |
+| `/dashboard/trips/new` | Add trip |
+| `/dashboard/trucks` | Truck management |
+| `/dashboard/customers` | Customer management |
+| `/dashboard/drivers` | Driver management |
+| `/dashboard/reports` | Monthly reports |
+| `/dashboard/settings` | Theme + logout |
 
-## Learn More
+## V1 scope
 
-To learn more about Next.js, take a look at the following resources:
+Daily trips (6 mandatory fields), trucks, customers, drivers (basic), dashboard, reports, light/dark mode, responsive web/mobile UI.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Out of scope for V1: EMI, GPS, payroll, expenses, WhatsApp automation.
