@@ -27,6 +27,22 @@ export async function listDrivers(search?: string): Promise<Driver[]> {
   return (data ?? []) as Driver[];
 }
 
+export async function getDriver(id: string): Promise<Driver> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("drivers")
+    .select(DRIVER_COLS)
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    throw new Error(
+      getUserFacingError(error, "Unable to load driver details.")
+    );
+  }
+  return data as Driver;
+}
+
 export async function createDriver(input: DriverInput): Promise<Driver> {
   const supabase = createClient();
   const { data, error } = await supabase

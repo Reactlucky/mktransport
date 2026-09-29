@@ -34,7 +34,11 @@ export const tripSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.string().email("Enter a valid email"),
+  username: z
+    .string()
+    .trim()
+    .min(1, "Username is required")
+    .max(50, "Username is too long"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 

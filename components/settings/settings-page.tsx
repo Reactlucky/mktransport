@@ -3,7 +3,7 @@
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getCurrentUser, logout as signOut } from "@/lib/auth/actions";
 import { PageHeader } from "@/components/ui/states";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,13 +17,12 @@ export function SettingsPageClient() {
   const router = useRouter();
   const { toast } = useToast();
   const [loggingOut, setLoggingOut] = useState(false);
-  const [email, setEmail] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (!cancelled) setEmail(data.user?.email ?? null);
+    getCurrentUser().then((user) => {
+      if (!cancelled) setUsername(user?.username ?? null);
     });
     return () => {
       cancelled = true;
@@ -33,8 +32,7 @@ export function SettingsPageClient() {
   async function logout() {
     setLoggingOut(true);
     try {
-      const supabase = createClient();
-      await supabase.auth.signOut();
+      await signOut();
       toast("Signed out", "success");
       router.replace("/login");
       router.refresh();
@@ -105,7 +103,7 @@ export function SettingsPageClient() {
           <div>
             <p className="text-sm font-medium">Account</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              {email ?? "Signed in"}
+              {username ? `Signed in as ${username}` : "Signed in"}
             </p>
           </div>
           <Button

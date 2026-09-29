@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { login } from "@/lib/auth/actions";
 import { loginSchema } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/dashboard";
 
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState("");
@@ -26,7 +26,7 @@ export default function LoginPage() {
     setFormError("");
     setErrors({});
 
-    const parsed = loginSchema.safeParse({ email, password });
+    const parsed = loginSchema.safeParse({ username, password });
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
       parsed.error.issues.forEach((issue) => {
@@ -39,16 +39,16 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({
-        email: parsed.data.email,
-        password: parsed.data.password,
-      });
-      if (error) {
-        setFormError("Invalid email or password. Please try again.");
+      const result = await login(parsed.data);
+      if (result.error) {
+        setFormError(result.error);
         return;
       }
-      router.replace(redirect);
+      const nextPath =
+        redirect.startsWith("/") && !redirect.startsWith("//")
+          ? redirect
+          : "/dashboard";
+      router.replace(nextPath);
       router.refresh();
     } catch {
       setFormError("Unable to sign in. Please try again.");
@@ -81,18 +81,17 @@ export default function LoginPage() {
 
           <form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate>
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                inputMode="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                aria-invalid={!!errors.email}
+                id="username"
+                type="text"
+                autoComplete="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                aria-invalid={!!errors.username}
               />
-              {errors.email && (
-                <p className="mt-1 text-xs text-danger">{errors.email}</p>
+              {errors.username && (
+                <p className="mt-1 text-xs text-danger">{errors.username}</p>
               )}
             </div>
             <div>

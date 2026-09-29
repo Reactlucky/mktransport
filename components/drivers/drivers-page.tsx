@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import { listDrivers, createDriver, updateDriver } from "@/lib/services/drivers";
@@ -21,6 +23,7 @@ import { useToast } from "@/components/providers/toast-provider";
 
 export function DriversPageClient() {
   const { toast } = useToast();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -119,15 +122,25 @@ export function DriversPageClient() {
             {query.data.map((d) => (
               <article
                 key={d.id}
-                className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
+                className="flex cursor-pointer items-center justify-between rounded-lg border border-border bg-card p-4 hover:bg-muted/40"
+                onClick={() => router.push(`/dashboard/drivers/${d.id}`)}
               >
                 <div>
-                  <p className="font-semibold">{d.name}</p>
+                  <Link
+                    href={`/dashboard/drivers/${d.id}`}
+                    className="font-semibold text-primary hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {d.name}
+                  </Link>
                   <p className="text-sm text-muted-foreground">
                     {d.phone || "No phone"}
                   </p>
                 </div>
-                <div className="flex flex-col items-end gap-2">
+                <div
+                  className="flex flex-col items-end gap-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <StatusBadge active={d.is_active} />
                   <Button
                     type="button"
@@ -156,14 +169,23 @@ export function DriversPageClient() {
                 {query.data.map((d) => (
                   <tr
                     key={d.id}
-                    className="border-b border-border last:border-0"
+                    className="cursor-pointer border-b border-border last:border-0 hover:bg-muted/40"
+                    onClick={() => router.push(`/dashboard/drivers/${d.id}`)}
                   >
-                    <td className="px-4 py-3 font-medium">{d.name}</td>
+                    <td className="px-4 py-3 font-medium">
+                      <Link
+                        href={`/dashboard/drivers/${d.id}`}
+                        className="text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {d.name}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3">{d.phone || "—"}</td>
                     <td className="px-4 py-3">
                       <StatusBadge active={d.is_active} />
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <button
                         type="button"
                         className="text-xs font-medium text-primary hover:underline"

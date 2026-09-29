@@ -240,12 +240,24 @@ export function DashboardPageClient() {
                         className="border-b border-border last:border-0"
                       >
                         <td className="px-4 py-3 font-medium">
-                          {trip.trucks?.registration_number}
+                          <Link
+                            href={`/dashboard/trucks/${trip.truck_id}`}
+                            className="text-primary hover:underline"
+                          >
+                            {trip.trucks?.registration_number}
+                          </Link>
                         </td>
                         <td className="px-4 py-3">
                           {trip.from_location} → {trip.to_location}
                         </td>
-                        <td className="px-4 py-3">{trip.customers?.name}</td>
+                        <td className="px-4 py-3">
+                          <Link
+                            href={`/dashboard/customers/${trip.customer_id}`}
+                            className="text-primary hover:underline"
+                          >
+                            {trip.customers?.name}
+                          </Link>
+                        </td>
                         <td className="px-4 py-3 text-right font-medium">
                           {formatCurrency(trip.rent)}
                         </td>
@@ -283,11 +295,22 @@ export function DashboardPageClient() {
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">
-                      {trip.trucks?.registration_number} · {trip.from_location}{" "}
-                      → {trip.to_location}
+                      <Link
+                        href={`/dashboard/trucks/${trip.truck_id}`}
+                        className="text-primary hover:underline"
+                      >
+                        {trip.trucks?.registration_number}
+                      </Link>{" "}
+                      · {trip.from_location} → {trip.to_location}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatDate(trip.trip_date)} · {trip.customers?.name}
+                      {formatDate(trip.trip_date)} ·{" "}
+                      <Link
+                        href={`/dashboard/customers/${trip.customer_id}`}
+                        className="hover:underline"
+                      >
+                        {trip.customers?.name}
+                      </Link>
                     </p>
                   </div>
                   <span className="shrink-0 text-sm font-semibold">

@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/client";
-import type { Truck, TruckStatus } from "@/lib/types";
+import type { Trip, Truck, TruckStatus } from "@/lib/types";
 import type { TruckInput } from "@/lib/validations";
 import { getUserFacingError } from "@/lib/utils";
+import { normalizeTrips } from "@/lib/services/normalize";
 
 const TRUCK_COLS =
   "id, registration_number, model, status, is_active, created_at, updated_at";
@@ -64,6 +65,34 @@ export async function getTruck(id: string): Promise<Truck> {
     );
   }
   return data as Truck;
+}
+
+export async function getTruckTrips(truckId: string): Promise<Trip[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("trips")
+    .select(
+      `
+      id,
+      trip_date,
+      from_location,
+      to_location,
+      rent,
+      truck_id,
+      customer_id,
+      created_at,
+      updated_at,
+      customers ( id, name )
+    `
+    )
+    .eq("truck_id", truckId)
+    .order("trip_date", { ascending: false })
+    .limit(50);
+
+  if (error) {
+    throw new Error(getUserFacingError(error, "Unable to load trip history."));
+  }
+  return normalizeTrips((data ?? []) as unknown[]);
 }
 
 export async function createTruck(input: TruckInput): Promise<Truck> {

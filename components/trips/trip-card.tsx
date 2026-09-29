@@ -17,11 +17,21 @@ export function TripCard({
     <article className="rounded-lg border border-border bg-card p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-semibold tracking-wide">{reg}</p>
+          <Link
+            href={`/dashboard/trucks/${trip.truck_id}`}
+            className="font-semibold tracking-wide text-primary hover:underline"
+          >
+            {reg}
+          </Link>
           <p className="mt-1 text-sm text-foreground">
             {trip.from_location} → {trip.to_location}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">{customer}</p>
+          <Link
+            href={`/dashboard/customers/${trip.customer_id}`}
+            className="mt-1 block text-sm text-muted-foreground hover:underline"
+          >
+            {customer}
+          </Link>
         </div>
         <p className="shrink-0 text-base font-semibold text-primary">
           {formatCurrency(trip.rent)}

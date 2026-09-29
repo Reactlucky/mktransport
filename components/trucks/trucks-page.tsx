@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import {
@@ -35,6 +37,7 @@ const statusClass: Record<TruckStatus, string> = {
 
 export function TrucksPageClient() {
   const { toast } = useToast();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -174,18 +177,28 @@ export function TrucksPageClient() {
             {query.data.map((truck) => (
               <article
                 key={truck.id}
-                className="rounded-lg border border-border bg-card p-4"
+                className="cursor-pointer rounded-lg border border-border bg-card p-4 hover:bg-muted/40"
+                onClick={() => router.push(`/dashboard/trucks/${truck.id}`)}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-semibold">{truck.registration_number}</p>
+                    <Link
+                      href={`/dashboard/trucks/${truck.id}`}
+                      className="font-semibold text-primary hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {truck.registration_number}
+                    </Link>
                     <p className="text-sm text-muted-foreground">
                       {truck.model || "No model"}
                     </p>
                   </div>
                   <StatusBadge active={truck.is_active} />
                 </div>
-                <div className="mt-3 flex items-center gap-2">
+                <div
+                  className="mt-3 flex items-center gap-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <Select
                     value={truck.status}
                     onChange={(e) =>
@@ -229,9 +242,19 @@ export function TrucksPageClient() {
               </thead>
               <tbody>
                 {query.data.map((truck) => (
-                  <tr key={truck.id} className="border-b border-border last:border-0">
+                  <tr
+                    key={truck.id}
+                    className="cursor-pointer border-b border-border last:border-0 hover:bg-muted/40"
+                    onClick={() => router.push(`/dashboard/trucks/${truck.id}`)}
+                  >
                     <td className="px-4 py-3 font-medium">
-                      {truck.registration_number}
+                      <Link
+                        href={`/dashboard/trucks/${truck.id}`}
+                        className="text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {truck.registration_number}
+                      </Link>
                     </td>
                     <td className="px-4 py-3">{truck.model || "—"}</td>
                     <td className="px-4 py-3">
@@ -244,7 +267,7 @@ export function TrucksPageClient() {
                         {statusLabel[truck.status]}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <button
                         type="button"
                         className="text-xs font-medium text-primary hover:underline"
@@ -258,7 +281,7 @@ export function TrucksPageClient() {
                         {truck.is_active ? "Deactivate" : "Activate"}
                       </button>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <button
                         type="button"
                         className="text-xs font-medium text-primary hover:underline"

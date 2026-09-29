@@ -3,6 +3,7 @@ export const queryKeys = {
     all: ["trucks"] as const,
     list: (search?: string) => ["trucks", "list", search ?? ""] as const,
     detail: (id: string) => ["trucks", "detail", id] as const,
+    trips: (id: string) => ["trucks", "trips", id] as const,
     active: ["trucks", "active"] as const,
   },
   customers: {

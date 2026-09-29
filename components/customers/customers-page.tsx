@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import {
   listCustomers,
   createCustomer,
   updateCustomer,
-  getCustomerTrips,
 } from "@/lib/services/customers";
 import { queryKeys } from "@/lib/query-keys";
 import type { Customer } from "@/lib/types";
@@ -23,26 +24,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog } from "@/components/ui/dialog";
 import { CustomerForm } from "@/components/customers/customer-form";
 import { useToast } from "@/components/providers/toast-provider";
-import { formatCurrency, formatDate } from "@/lib/utils";
 
 export function CustomersPageClient() {
   const { toast } = useToast();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Customer | null>(null);
-  const [historyFor, setHistoryFor] = useState<Customer | null>(null);
 
   const query = useQuery({
     queryKey: queryKeys.customers.list(search),
     queryFn: () => listCustomers(search || undefined),
     staleTime: 60_000,
-  });
-
-  const historyQuery = useQuery({
-    queryKey: queryKeys.customers.trips(historyFor?.id ?? ""),
-    queryFn: () => getCustomerTrips(historyFor!.id),
-    enabled: !!historyFor,
   });
 
   const createMutation = useMutation({
@@ -136,11 +130,18 @@ export function CustomersPageClient() {
             {query.data.map((c) => (
               <article
                 key={c.id}
-                className="rounded-lg border border-border bg-card p-4"
+                className="cursor-pointer rounded-lg border border-border bg-card p-4 hover:bg-muted/40"
+                onClick={() => router.push(`/dashboard/customers/${c.id}`)}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-semibold">{c.name}</p>
+                    <Link
+                      href={`/dashboard/customers/${c.id}`}
+                      className="font-semibold text-primary hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {c.name}
+                    </Link>
                     <p className="text-sm text-muted-foreground">
                       {c.phone || "No phone"}
                       {c.location ? ` · ${c.location}` : ""}
@@ -148,7 +149,7 @@ export function CustomersPageClient() {
                   </div>
                   <StatusBadge active={c.is_active} />
                 </div>
-                <div className="mt-3 flex gap-2">
+                <div className="mt-3 flex gap-2" onClick={(e) => e.stopPropagation()}>
                   <Button
                     type="button"
                     variant="outline"
@@ -161,7 +162,7 @@ export function CustomersPageClient() {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => setHistoryFor(c)}
+                    onClick={() => router.push(`/dashboard/customers/${c.id}`)}
                   >
                     Trip history
                   </Button>
@@ -185,22 +186,30 @@ export function CustomersPageClient() {
                 {query.data.map((c) => (
                   <tr
                     key={c.id}
-                    className="border-b border-border last:border-0"
+                    className="cursor-pointer border-b border-border last:border-0 hover:bg-muted/40"
+                    onClick={() => router.push(`/dashboard/customers/${c.id}`)}
                   >
-                    <td className="px-4 py-3 font-medium">{c.name}</td>
+                    <td className="px-4 py-3 font-medium">
+                      <Link
+                        href={`/dashboard/customers/${c.id}`}
+                        className="text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {c.name}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3">{c.phone || "—"}</td>
                     <td className="px-4 py-3">{c.location || "—"}</td>
                     <td className="px-4 py-3">
                       <StatusBadge active={c.is_active} />
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      <button
-                        type="button"
+                    <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
+                      <Link
+                        href={`/dashboard/customers/${c.id}`}
                         className="mr-3 text-xs font-medium text-primary hover:underline"
-                        onClick={() => setHistoryFor(c)}
                       >
                         History
-                      </button>
+                      </Link>
                       <button
                         type="button"
                         className="text-xs font-medium text-primary hover:underline"
@@ -240,45 +249,6 @@ export function CustomersPageClient() {
               await updateMutation.mutateAsync({ id: editing.id, data });
             }}
           />
-        )}
-      </Dialog>
-
-      <Dialog
-        open={!!historyFor}
-        onClose={() => setHistoryFor(null)}
-        title={historyFor ? `Trips · ${historyFor.name}` : "Trip history"}
-        className="max-w-xl"
-        fullScreenMobile
-      >
-        {historyQuery.isLoading && (
-          <div className="space-y-2">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        )}
-        {historyQuery.isSuccess && historyQuery.data.length === 0 && (
-          <p className="text-sm text-muted-foreground">No trips yet.</p>
-        )}
-        {historyQuery.isSuccess && historyQuery.data.length > 0 && (
-          <ul className="space-y-2">
-            {historyQuery.data.map((t) => (
-              <li
-                key={t.id}
-                className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2 text-sm"
-              >
-                <div>
-                  <p className="font-medium">
-                    {t.from_location} → {t.to_location}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDate(t.trip_date)} ·{" "}
-                    {t.trucks?.registration_number}
-                  </p>
-                </div>
-                <span className="font-semibold">{formatCurrency(t.rent)}</span>
-              </li>
-            ))}
-          </ul>
         )}
       </Dialog>
     </div>

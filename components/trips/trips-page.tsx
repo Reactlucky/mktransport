@@ -293,13 +293,23 @@ export function TripsPageClient() {
                         {formatDate(trip.trip_date)}
                       </td>
                       <td className="px-4 py-3 font-medium">
-                        {trip.trucks?.registration_number ?? "—"}
+                        <Link
+                          href={`/dashboard/trucks/${trip.truck_id}`}
+                          className="text-primary hover:underline"
+                        >
+                          {trip.trucks?.registration_number ?? "—"}
+                        </Link>
                       </td>
                       <td className="px-4 py-3">
                         {trip.from_location} → {trip.to_location}
                       </td>
                       <td className="px-4 py-3">
-                        {trip.customers?.name ?? "—"}
+                        <Link
+                          href={`/dashboard/customers/${trip.customer_id}`}
+                          className="text-primary hover:underline"
+                        >
+                          {trip.customers?.name ?? "—"}
+                        </Link>
                       </td>
                       <td className="px-4 py-3 text-right font-medium">
                         {formatCurrency(trip.rent)}

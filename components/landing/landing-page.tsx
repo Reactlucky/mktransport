@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   CustomerIcon,
@@ -6,7 +7,6 @@ import {
   ReportIcon,
   RouteIcon,
   TruckIcon,
-  TruckRoadIllustration,
 } from "@/components/icons/transport";
 
 const features = [
@@ -102,7 +102,14 @@ export function LandingPage() {
             </div>
           </div>
           <div className="md:pl-4">
-            <TruckRoadIllustration className="rounded-xl border border-border shadow-sm" />
+            <Image
+              src="/mk-transport-logo.jpg"
+              alt="MK Transport logo"
+              width={1024}
+              height={512}
+              priority
+              className="h-auto w-full rounded-xl shadow-sm"
+            />
           </div>
         </div>
       </section>

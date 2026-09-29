@@ -1,5 +1,5 @@
 -- Seed data for MK Transport development/demo
--- Run after 001_initial.sql
+-- Run after 001_initial.sql and 002_users.sql
 
 INSERT INTO trucks (registration_number, model, status, is_active) VALUES
   ('GJ08AW0236', 'Tata 407', 'running', true),

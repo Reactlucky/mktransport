@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import {
   getCustomerWiseReport,
@@ -117,7 +118,12 @@ export function ReportsPageClient() {
                 <Card key={row.truck_id}>
                   <CardContent className="flex items-center justify-between py-3">
                     <div>
-                      <p className="font-semibold">{row.registration_number}</p>
+                      <Link
+                        href={`/dashboard/trucks/${row.truck_id}`}
+                        className="font-semibold text-primary hover:underline"
+                      >
+                        {row.registration_number}
+                      </Link>
                       <p className="text-xs text-muted-foreground">
                         {row.trip_count} trips
                       </p>
@@ -148,7 +154,12 @@ export function ReportsPageClient() {
                         className="border-b border-border last:border-0"
                       >
                         <td className="px-4 py-3 font-medium">
-                          {row.registration_number}
+                          <Link
+                            href={`/dashboard/trucks/${row.truck_id}`}
+                            className="text-primary hover:underline"
+                          >
+                            {row.registration_number}
+                          </Link>
                         </td>
                         <td className="px-4 py-3">{row.trip_count}</td>
                         <td className="px-4 py-3 text-right font-medium">
@@ -185,7 +196,12 @@ export function ReportsPageClient() {
                 <Card key={row.customer_id}>
                   <CardContent className="flex items-center justify-between py-3">
                     <div>
-                      <p className="font-semibold">{row.name}</p>
+                      <Link
+                        href={`/dashboard/customers/${row.customer_id}`}
+                        className="font-semibold text-primary hover:underline"
+                      >
+                        {row.name}
+                      </Link>
                       <p className="text-xs text-muted-foreground">
                         {row.trip_count} trips
                       </p>
@@ -216,7 +232,14 @@ export function ReportsPageClient() {
                         key={row.customer_id}
                         className="border-b border-border last:border-0"
                       >
-                        <td className="px-4 py-3 font-medium">{row.name}</td>
+                        <td className="px-4 py-3 font-medium">
+                          <Link
+                            href={`/dashboard/customers/${row.customer_id}`}
+                            className="text-primary hover:underline"
+                          >
+                            {row.name}
+                          </Link>
+                        </td>
                         <td className="px-4 py-3">{row.trip_count}</td>
                         <td className="px-4 py-3 text-right font-medium">
                           {formatCurrency(row.total_rent)}
