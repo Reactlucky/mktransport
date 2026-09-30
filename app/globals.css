@@ -36,6 +36,35 @@
   --radius-2xl: 28px;
 }
 
+.landing-light {
+  --background: #f5f7fa;
+  --foreground: #0b1f3a;
+  --card: #ffffff;
+  --card-foreground: #0b1f3a;
+  --muted: #f8fafc;
+  --muted-foreground: #5b6b80;
+  --border: rgba(15, 23, 42, 0.06);
+  --input: rgba(15, 23, 42, 0.08);
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --primary-hover: #2563eb;
+  --navy: #0b1f3a;
+  --accent: #eff6ff;
+  --accent-foreground: #1d4ed8;
+  --sidebar: rgba(255, 255, 255, 0.72);
+  --sidebar-foreground: #0b1f3a;
+  --sidebar-muted: #5b6b80;
+  --sidebar-active: #dbeafe;
+  --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 8px 30px rgba(15, 23, 42, 0.05);
+  --shadow-floating: 0 12px 40px rgba(15, 23, 42, 0.08);
+  background:
+    radial-gradient(900px 480px at 85% -10%, rgba(59, 130, 246, 0.16), transparent 55%),
+    radial-gradient(700px 360px at 0% 0%, rgba(14, 165, 233, 0.12), transparent 50%),
+    #f5f7fa;
+  color: #0b1f3a;
+}
+
 .dark {
   --background: #070b14;
   --foreground: #e8eef8;

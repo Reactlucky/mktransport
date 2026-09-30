@@ -51,7 +51,7 @@ const benefits = [
 
 export function LandingPage() {
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div className="landing-light min-h-dvh text-foreground">
       <header className="sticky top-0 z-20 border-b border-border/70 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">
@@ -102,14 +102,16 @@ export function LandingPage() {
             </div>
           </div>
           <div className="md:pl-4">
-            <Image
-              src="/mk-transport-logo.jpg"
-              alt="MK Transport logo"
-              width={1024}
-              height={512}
-              priority
-              className="h-auto w-full rounded-[28px] shadow-[var(--shadow-floating)]"
-            />
+            <div className="overflow-hidden rounded-[28px] border border-border bg-gradient-to-br from-[#dbeafe] via-[#eef6ff] to-white p-4 shadow-[var(--shadow-floating)] sm:p-8">
+              <Image
+                src="/mk-transport-logo.png"
+                alt="MK Transport logo"
+                width={1024}
+                height={512}
+                priority
+                className="h-auto w-full"
+              />
+            </div>
           </div>
         </div>
       </section>
