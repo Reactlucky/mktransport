@@ -18,6 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
 import { TruckForm } from "@/components/trucks/truck-form";
 import { RelatedTrips } from "@/components/trips/related-trips";
+import { AssignmentHistory } from "@/components/drivers/assignment-history";
 import { useToast } from "@/components/providers/toast-provider";
 import { cn } from "@/lib/utils";
 
@@ -132,6 +133,9 @@ export function TruckDetailPage({ id }: { id: string }) {
         </CardContent>
       </Card>
 
+      <AssignmentHistory truckId={truck.id} />
+
+      <div className="mt-6">
       <RelatedTrips
         trips={tripsQuery.data}
         isLoading={tripsQuery.isLoading}
@@ -140,6 +144,7 @@ export function TruckDetailPage({ id }: { id: string }) {
         secondaryLabel="Customer"
         secondary={(trip) => trip.customers?.name ?? "—"}
       />
+      </div>
 
       <Dialog
         open={editing}

@@ -16,7 +16,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
 import { DriverForm } from "@/components/drivers/driver-form";
+import { AssignmentHistory } from "@/components/drivers/assignment-history";
+import { DriverAttendanceSummary } from "@/components/drivers/driver-attendance-summary";
+import { DriverSalarySection } from "@/components/drivers/driver-salary";
 import { useToast } from "@/components/providers/toast-provider";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 export function DriverDetailPage({ id }: { id: string }) {
   const { toast } = useToast();
@@ -94,8 +98,36 @@ export function DriverDetailPage({ id }: { id: string }) {
               <StatusBadge active={driver.is_active} />
             </p>
           </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Address</p>
+            <p className="mt-0.5 text-sm font-medium">{driver.address || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Joining date</p>
+            <p className="mt-0.5 text-sm font-medium">
+              {driver.joining_date ? formatDate(driver.joining_date) : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Monthly salary</p>
+            <p className="mt-0.5 text-sm font-medium">
+              {formatCurrency(driver.salary)}
+            </p>
+          </div>
+          {driver.notes && (
+            <div className="sm:col-span-3">
+              <p className="text-xs text-muted-foreground">Notes</p>
+              <p className="mt-0.5 whitespace-pre-wrap text-sm">{driver.notes}</p>
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      <AssignmentHistory driverId={driver.id} />
+
+      <DriverAttendanceSummary driverId={driver.id} />
+
+      <DriverSalarySection driverId={driver.id} currentSalary={driver.salary} />
 
       <Dialog
         open={editing}

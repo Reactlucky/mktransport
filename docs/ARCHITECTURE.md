@@ -8,7 +8,7 @@ Browser
    v
 Next.js Application
    |
-   +--> Supabase Auth
+   +--> App session cookie
    |
    +--> Supabase PostgreSQL
    |
@@ -32,7 +32,7 @@ Client/server actions and application services for:
 Supabase PostgreSQL accessed through the Supabase client.
 
 ### Authentication
-Supabase Auth handles user authentication.
+The dashboard is protected by an app session cookie (`lib/auth/session.ts`), not Supabase Auth. Accounts live in the `users` table. Supabase is the database.
 
 ## 3. Recommended Route Structure
 
@@ -45,11 +45,13 @@ Supabase Auth handles user authentication.
     ├── trucks
     ├── customers
     ├── drivers
+    ├── attendance
+    ├── salary
     ├── reports
     └── settings
 ```
 
-Some sections such as drivers and reports can remain hidden or limited until their V1 functionality is implemented.
+Drivers, attendance, and salaries are part of the dashboard. Reports stay limited to monthly trip totals until later versions.
 
 ## 4. Core Workflow
 

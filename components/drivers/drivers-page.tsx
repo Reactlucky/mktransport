@@ -7,7 +7,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import { listDrivers, createDriver, updateDriver } from "@/lib/services/drivers";
 import { queryKeys } from "@/lib/query-keys";
-import type { Driver } from "@/lib/types";
+import type { Driver, DriverStatusFilter } from "@/lib/types";
+import { formatCurrency } from "@/lib/utils";
 import {
   PageHeader,
   EmptyState,
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog } from "@/components/ui/dialog";
 import { DriverForm } from "@/components/drivers/driver-form";
@@ -26,12 +28,13 @@ export function DriversPageClient() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const [status, setStatus] = useState<DriverStatusFilter>("all");
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Driver | null>(null);
 
   const query = useQuery({
-    queryKey: queryKeys.drivers.list(search),
-    queryFn: () => listDrivers(search || undefined),
+    queryKey: queryKeys.drivers.list(search, status),
+    queryFn: () => listDrivers(search || undefined, status),
     staleTime: 60_000,
   });
 
@@ -61,27 +64,70 @@ export function DriversPageClient() {
     onError: (e: Error) => toast(e.message, "error"),
   });
 
+  const toggleMutation = useMutation({
+    mutationFn: ({ id, is_active }: { id: string; is_active: boolean }) =>
+      updateDriver(id, { is_active }),
+    onMutate: async ({ id, is_active }) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.drivers.all });
+      const key = queryKeys.drivers.list(search, status);
+      const prev = queryClient.getQueryData<Driver[]>(key);
+      queryClient.setQueryData<Driver[]>(key, (old) =>
+        old?.map((d) => (d.id === id ? { ...d, is_active } : d))
+      );
+      return { prev, key };
+    },
+    onError: (e: Error, _v, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(ctx.key, ctx.prev);
+      toast(e.message, "error");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.drivers.all });
+    },
+  });
+
+  const filtering = search.trim().length > 0 || status !== "all";
+
   return (
     <div>
       <PageHeader
         title="Drivers"
-        description="Basic driver records. Payroll and attendance come later."
+        description="People who drive the trucks."
         action={
-          <Button type="button" onClick={() => setOpen(true)}>
-            <Plus className="size-4" />
-            Add Driver
-          </Button>
+          <div className="flex gap-2">
+            <Link
+              href="/dashboard/salary"
+              className="inline-flex h-11 items-center rounded-md border border-border bg-card px-4 text-sm font-medium hover:bg-muted"
+            >
+              Salaries
+            </Link>
+            <Button type="button" onClick={() => setOpen(true)}>
+              <Plus className="size-4" />
+              Add Driver
+            </Button>
+          </div>
         }
       />
 
-      <div className="relative mb-4 max-w-md">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search drivers..."
-          className="pl-9"
-        />
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative max-w-md flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search drivers..."
+            className="pl-9"
+          />
+        </div>
+        <Select
+          value={status}
+          onChange={(e) => setStatus(e.target.value as DriverStatusFilter)}
+          aria-label="Filter by status"
+          className="sm:w-40"
+        >
+          <option value="all">All statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </Select>
       </div>
 
       {query.isLoading && (
@@ -105,13 +151,19 @@ export function DriversPageClient() {
 
       {query.isSuccess && query.data.length === 0 && (
         <EmptyState
-          title="No drivers yet"
-          description="Add drivers to prepare for future assignments."
+          title={filtering ? "No drivers match" : "No drivers yet"}
+          description={
+            filtering
+              ? "Try a different name, phone, or status."
+              : "Add a driver to assign them to a truck."
+          }
           action={
-            <Button type="button" onClick={() => setOpen(true)}>
-              <Plus className="size-4" />
-              Add Driver
-            </Button>
+            filtering ? undefined : (
+              <Button type="button" onClick={() => setOpen(true)}>
+                <Plus className="size-4" />
+                Add Driver
+              </Button>
+            )
           }
         />
       )}
@@ -135,6 +187,7 @@ export function DriversPageClient() {
                   </Link>
                   <p className="text-sm text-muted-foreground">
                     {d.phone || "No phone"}
+                    {d.salary > 0 ? ` · ${formatCurrency(d.salary)}` : ""}
                   </p>
                 </div>
                 <div
@@ -142,6 +195,18 @@ export function DriversPageClient() {
                   onClick={(e) => e.stopPropagation()}
                 >
                   <StatusBadge active={d.is_active} />
+                  <button
+                    type="button"
+                    className="text-xs font-medium text-primary hover:underline"
+                    onClick={() =>
+                      toggleMutation.mutate({
+                        id: d.id,
+                        is_active: !d.is_active,
+                      })
+                    }
+                  >
+                    {d.is_active ? "Deactivate" : "Activate"}
+                  </button>
                   <Button
                     type="button"
                     variant="outline"
@@ -161,6 +226,7 @@ export function DriversPageClient() {
                 <tr>
                   <th className="px-4 py-3 font-medium">Name</th>
                   <th className="px-4 py-3 font-medium">Phone</th>
+                  <th className="px-4 py-3 font-medium">Salary</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium text-right">Actions</th>
                 </tr>
@@ -182,10 +248,23 @@ export function DriversPageClient() {
                       </Link>
                     </td>
                     <td className="px-4 py-3">{d.phone || "—"}</td>
+                    <td className="px-4 py-3">{formatCurrency(d.salary)}</td>
                     <td className="px-4 py-3">
                       <StatusBadge active={d.is_active} />
                     </td>
                     <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        className="mr-3 text-xs font-medium text-primary hover:underline"
+                        onClick={() =>
+                          toggleMutation.mutate({
+                            id: d.id,
+                            is_active: !d.is_active,
+                          })
+                        }
+                      >
+                        {d.is_active ? "Deactivate" : "Activate"}
+                      </button>
                       <button
                         type="button"
                         className="text-xs font-medium text-primary hover:underline"

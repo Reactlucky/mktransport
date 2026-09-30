@@ -53,7 +53,29 @@ DELETE /customers/:id
 
 ### Drivers
 
-Reserved for the driver-management phase.
+```text
+GET /drivers
+POST /drivers
+PATCH /drivers/:id
+GET /drivers/:id
+```
+
+Driver fields: name, phone, address, joining date, salary, notes, active flag.
+
+Assignments:
+
+```text
+GET /driver-assignments?truck_id=
+GET /driver-assignments?driver_id=
+POST /driver-assignments        assign_driver
+PATCH /driver-assignments/:id   set ended_on
+```
+
+Attendance is one status per driver per date: present, absent, leave, half_day.
+
+Salary months snapshot gross salary. Pay entries are either `advance` or `salary_payment`. Remaining pay is never negative.
+
+These are logical operations. The app performs them with the Supabase client in `lib/services`.
 
 ## 3. Trip Payload
 

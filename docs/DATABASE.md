@@ -58,15 +58,69 @@ A customer can have many trips.
 
 Each trip belongs to one truck and one customer.
 
-## 4. Future Tables
+Drivers are separate from trips. A truck's driver comes from `driver_assignments`, not from a column on the truck or the trip.
 
-These should be added when the relevant features are implemented:
+## 4. V2 Tables
+
+Migrations `003` through `006`. Apply them after `001` and `002`.
+
+### drivers
+
+Existing columns, plus:
 
 ```text
-drivers
-driver_assignments
-driver_attendance
-driver_salary_transactions
+address
+joining_date
+salary          numeric(12,2), never negative
+notes
+```
+
+### driver_assignments
+
+```text
+id
+driver_id
+truck_id
+started_on
+ended_on        null while the assignment is current
+notes
+created_at
+updated_at
+```
+
+One open assignment per truck and one open assignment per driver. `assign_driver` ends the conflicting open rows, then inserts the new one.
+
+### driver_attendance
+
+One row per driver per date. Status is `present`, `absent`, `leave`, or `half_day`.
+
+### driver_salary_months
+
+```text
+driver_id
+year
+month
+gross_salary    copied from the driver when the month is opened
+```
+
+`open_salary_month` creates the row once. Later changes to the driver's salary do not rewrite it.
+
+### driver_pay_entries
+
+```text
+driver_id
+salary_month_id
+kind            advance or salary_payment
+amount          greater than 0
+entry_date
+notes
+```
+
+Remaining salary is gross minus advances minus payments, and it is never shown below zero.
+
+## 5. Later Tables
+
+```text
 truck_emi
 truck_services
 truck_maintenance
@@ -77,7 +131,7 @@ return_loads
 reminders
 ```
 
-## 5. Important Design Rule
+## 6. Important Design Rule
 
 Do not put every possible business field into the trips table.
 
@@ -89,7 +143,7 @@ For example:
 
 Trips should primarily represent a transport movement and its financial basics.
 
-## 6. Example Data
+## 7. Example Data
 
 ### Trip 1
 
@@ -113,10 +167,8 @@ customer: Surya Granite
 rent: 900
 ```
 
-## 7. Security
+## 8. Security
 
 Supabase Row Level Security must be enabled.
 
-The authenticated business user should only access records they are authorized to access.
-
-Never rely only on frontend restrictions for security.
+The app checks its own session cookie before dashboard pages load. Database policies still allow the publishable key to read and write business tables, matching migration `002_users.sql`. New tables use that same policy. Do not put a service-role key in frontend code.

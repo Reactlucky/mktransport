@@ -21,6 +21,10 @@ export const customerSchema = z.object({
 export const driverSchema = z.object({
   name: z.string().trim().min(1, "Driver name is required").max(120),
   phone: z.string().trim().max(20).optional().or(z.literal("")),
+  address: z.string().trim().max(240).optional().or(z.literal("")),
+  joining_date: z.string().optional().or(z.literal("")),
+  salary: z.coerce.number().min(0, "Salary cannot be negative"),
+  notes: z.string().trim().max(500).optional().or(z.literal("")),
   is_active: z.boolean(),
 });
 

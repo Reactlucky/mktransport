@@ -11,7 +11,7 @@ import {
   RouteIcon,
   TruckIcon,
 } from "@/components/icons/transport";
-import { Settings } from "lucide-react";
+import { Settings, ClipboardCheck } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: DashboardIcon, exact: true },
@@ -19,6 +19,7 @@ const navItems = [
   { href: "/dashboard/trucks", label: "Trucks", icon: TruckIcon },
   { href: "/dashboard/customers", label: "Customers", icon: CustomerIcon },
   { href: "/dashboard/drivers", label: "Drivers", icon: DriverIcon },
+  { href: "/dashboard/attendance", label: "Attendance", icon: ClipboardCheck },
   { href: "/dashboard/reports", label: "Reports", icon: ReportIcon },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];

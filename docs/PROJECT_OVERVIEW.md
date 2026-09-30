@@ -67,9 +67,9 @@ Rent: ₹900
 
 ## 5. Future Scope
 
-The following should be designed for later but not make V1 unnecessarily complex:
-- Driver assignment
-- Return load
+V2 already covers driver records, truck assignment history, daily attendance, and salary with advances.
+
+Still later:
 - Advance/payment tracking
 - Diesel
 - Toll
@@ -77,7 +77,7 @@ The following should be designed for later but not make V1 unnecessarily complex
 - EMI schedules
 - Maintenance/service history
 - Insurance/PUC/fitness reminders
-- Driver salary and attendance
+- Return load
 - Customer payment tracking
 - Truck profitability
 - GPS/live location

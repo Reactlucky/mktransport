@@ -80,17 +80,17 @@ Future:
 
 ### 1.6 Drivers
 
-Future driver records should support:
+A driver record stores:
+
 - Name
 - Phone
-- Salary
-- Advance
-- Attendance
-- Assigned truck
-- Trip history
-- Other allowances
+- Address
+- Joining date
+- Monthly salary
+- Notes
+- Active/inactive status
 
-Driver functionality may be introduced after the basic trip workflow is stable.
+The app can assign a driver to a truck, keep assignment history, mark daily attendance, and record salary payments and advances against a month.
 
 ## 2. UX Requirements
 
@@ -113,8 +113,7 @@ Driver functionality may be introduced after the basic trip workflow is stable.
 - Use pagination for growing tables.
 
 ### Security
-- Use Supabase Auth.
-- Enable Row Level Security.
+- The dashboard requires the app session cookie. Database access uses the Supabase publishable key with Row Level Security.
 - Never expose service-role credentials in frontend code.
 - Validate user input.
 

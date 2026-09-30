@@ -9,7 +9,7 @@
 | UI | React |
 | Styling | Tailwind CSS |
 | Database | Supabase PostgreSQL |
-| Authentication | Supabase Auth |
+| Authentication | App session cookie, accounts in `users` |
 | Storage | Supabase Storage |
 | Deployment | Vercel |
 | Version Control | Git / GitHub |
