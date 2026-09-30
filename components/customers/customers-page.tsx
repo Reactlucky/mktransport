@@ -130,7 +130,7 @@ export function CustomersPageClient() {
             {query.data.map((c) => (
               <article
                 key={c.id}
-                className="cursor-pointer rounded-lg border border-border bg-card p-4 hover:bg-muted/40"
+                className="cursor-pointer rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] p-4 hover:bg-muted/40"
                 onClick={() => router.push(`/dashboard/customers/${c.id}`)}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -171,7 +171,7 @@ export function CustomersPageClient() {
             ))}
           </div>
 
-          <div className="hidden overflow-hidden rounded-lg border border-border bg-card md:block">
+          <div className="hidden overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border bg-muted/50 text-muted-foreground">
                 <tr>

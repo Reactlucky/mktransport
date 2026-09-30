@@ -73,7 +73,7 @@ export function AssignmentHistory({
       )}
 
       {query.isSuccess && !current && (
-        <p className="rounded-lg border border-border bg-card px-4 py-6 text-sm text-muted-foreground">
+        <p className="rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] px-4 py-6 text-sm text-muted-foreground">
           {truckId
             ? "No driver is assigned to this truck."
             : "This driver is not assigned to a truck."}
@@ -81,7 +81,7 @@ export function AssignmentHistory({
       )}
 
       {current && (
-        <div className="rounded-lg border border-border bg-card px-4 py-4">
+        <div className="rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] px-4 py-4">
           <p className="text-xs text-muted-foreground">Current</p>
           <p className="mt-1 text-sm font-medium">
             {truckId ? (

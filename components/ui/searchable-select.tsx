@@ -104,7 +104,7 @@ export function SearchableSelect({
         disabled={disabled}
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "flex h-11 w-full items-center justify-between rounded-md border bg-card px-3 text-left text-base md:text-sm",
+          "flex h-12 w-full items-center justify-between rounded-[14px] border bg-muted/80 px-3 text-left text-base md:text-sm",
           error ? "border-danger" : "border-input",
           !value && "text-muted-foreground"
         )}
@@ -117,7 +117,7 @@ export function SearchableSelect({
       {error && <p className="mt-1 text-xs text-danger">{error}</p>}
 
       {open && (
-        <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-border bg-card shadow-sm">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-floating)]">
           <div className="relative border-b border-border p-2">
             <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input

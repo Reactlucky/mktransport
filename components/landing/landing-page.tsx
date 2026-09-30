@@ -52,10 +52,10 @@ const benefits = [
 export function LandingPage() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
-      <header className="sticky top-0 z-20 border-b border-border bg-card/90 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 md:px-6">
+      <header className="sticky top-0 z-20 border-b border-border/70 bg-background/70 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">
-            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <span className="flex size-10 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] text-white">
               <TruckIcon className="size-4" />
             </span>
             <span className="font-display text-sm font-semibold tracking-tight md:text-base">
@@ -64,7 +64,7 @@ export function LandingPage() {
           </Link>
           <Link
             href="/login"
-            className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary-hover"
+            className="inline-flex h-11 items-center rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-4 text-sm font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
           >
             Get Started
           </Link>
@@ -89,13 +89,13 @@ export function LandingPage() {
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 href="/login"
-                className="inline-flex h-12 items-center rounded-md bg-primary px-6 text-base font-medium text-primary-foreground hover:bg-primary-hover"
+                className="inline-flex h-12 items-center rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-6 text-base font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
               >
                 Get Started
               </Link>
               <a
                 href="#features"
-                className="inline-flex h-12 items-center rounded-md border border-border bg-card px-6 text-base font-medium hover:bg-muted"
+                className="inline-flex h-12 items-center rounded-[14px] border border-border bg-card px-6 text-base font-medium shadow-[var(--shadow-soft)] hover:bg-muted"
               >
                 See features
               </a>
@@ -108,7 +108,7 @@ export function LandingPage() {
               width={1024}
               height={512}
               priority
-              className="h-auto w-full rounded-xl shadow-sm"
+              className="h-auto w-full rounded-[28px] shadow-[var(--shadow-floating)]"
             />
           </div>
         </div>
@@ -126,7 +126,7 @@ export function LandingPage() {
           {features.map((f) => {
             const Icon = f.icon;
             return (
-              <div key={f.title}>
+              <div key={f.title} className="rounded-[20px] border border-border bg-card p-5 shadow-[var(--shadow-card)]">
                 <span className="mb-3 inline-flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
                   <Icon className="size-5" />
                 </span>
@@ -137,7 +137,7 @@ export function LandingPage() {
               </div>
             );
           })}
-          <div>
+          <div className="rounded-[20px] border border-border bg-card p-5 shadow-[var(--shadow-card)]">
             <span className="mb-3 inline-flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
               <CustomerIcon className="size-5" />
             </span>
@@ -181,7 +181,7 @@ export function LandingPage() {
         </p>
         <Link
           href="/login"
-          className="mt-7 inline-flex h-12 items-center rounded-md bg-primary px-8 text-base font-medium text-primary-foreground hover:bg-primary-hover"
+          className="mt-7 inline-flex h-12 items-center rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-8 text-base font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
         >
           Get Started
         </Link>

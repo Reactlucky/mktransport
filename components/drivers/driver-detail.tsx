@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { getDriver, updateDriver } from "@/lib/services/drivers";
+import { countDriverTripsThisMonth, getDriver, updateDriver } from "@/lib/services/drivers";
 import { queryKeys } from "@/lib/query-keys";
 import {
   PageHeader,
@@ -30,6 +30,12 @@ export function DriverDetailPage({ id }: { id: string }) {
   const driverQuery = useQuery({
     queryKey: queryKeys.drivers.detail(id),
     queryFn: () => getDriver(id),
+  });
+
+  const monthTrips = useQuery({
+    queryKey: queryKeys.drivers.monthTrips(id),
+    queryFn: () => countDriverTripsThisMonth(id),
+    enabled: driverQuery.isSuccess,
   });
 
   const updateMutation = useMutation({
@@ -112,6 +118,12 @@ export function DriverDetailPage({ id }: { id: string }) {
             <p className="text-xs text-muted-foreground">Monthly salary</p>
             <p className="mt-0.5 text-sm font-medium">
               {formatCurrency(driver.salary)}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Trips this month</p>
+            <p className="mt-0.5 font-display text-lg font-semibold tabular">
+              {monthTrips.isLoading ? "…" : monthTrips.data ?? "—"}
             </p>
           </div>
           {driver.notes && (

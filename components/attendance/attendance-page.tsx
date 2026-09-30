@@ -136,7 +136,7 @@ export function AttendancePageClient() {
               return (
                 <li
                   key={driver.id}
-                  className="rounded-lg border border-border bg-card p-4"
+                  className="rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] p-4"
                 >
                   <p className="font-semibold">{driver.name}</p>
                   <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">

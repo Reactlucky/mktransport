@@ -15,6 +15,13 @@ id
 registration_number
 name/model (optional)
 is_active
+registration_date
+fitness_valid_until
+tax_valid_until
+tax_is_lifetime (LTT when true)
+insurance_valid_until
+pucc_valid_until
+emi_due_on
 created_at
 updated_at
 ```

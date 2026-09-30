@@ -101,7 +101,7 @@ export function DriverSalarySection({
       )}
 
       {monthQuery.isSuccess && !salaryMonth && (
-        <div className="rounded-lg border border-border bg-card px-4 py-4">
+        <div className="rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] px-4 py-4">
           <p className="text-sm text-muted-foreground">
             Current salary on the driver record is {formatCurrency(currentSalary)}.
             Starting the month saves that amount and later salary changes will not rewrite it.
@@ -183,7 +183,7 @@ export function DriverSalarySection({
 
 function Figure({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-border bg-card px-3 py-3">
+    <div className="rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] px-3 py-3">
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-1 text-lg font-semibold tabular-nums">{value}</p>
     </div>

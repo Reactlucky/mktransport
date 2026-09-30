@@ -59,19 +59,20 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
-      <header className="flex h-14 items-center px-4 md:px-8">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <TruckIcon className="size-4" />
+      <main className="flex flex-1 flex-col items-center justify-center px-5 py-10">
+        <Link href="/" className="mb-8 flex flex-col items-center text-center">
+          <span className="flex size-14 items-center justify-center rounded-[18px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] text-white shadow-[0_10px_24px_rgba(37,99,235,0.28)]">
+            <TruckIcon className="size-7" />
           </span>
-          <span className="font-display text-sm font-semibold">
+          <span className="mt-4 font-display text-4xl font-semibold tracking-tight text-navy sm:text-5xl">
             MK Transport
           </span>
+          <span className="mt-2 max-w-xs text-sm text-muted-foreground">
+            Trucks, trips, drivers, and rent in one place.
+          </span>
         </Link>
-      </header>
 
-      <main className="flex flex-1 items-center justify-center px-4 py-10">
-        <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-sm md:p-8">
+        <div className="w-full max-w-md rounded-[28px] border border-border bg-card p-6 shadow-[var(--shadow-floating)] md:p-8">
           <h1 className="font-display text-2xl font-semibold tracking-tight">
             Sign in
           </h1>
@@ -124,6 +125,10 @@ export default function LoginPage() {
           </form>
         </div>
       </main>
+      <footer className="px-6 pb-8 text-center text-sm text-muted-foreground">
+        <p>Transport management for a small fleet.</p>
+        <p className="mt-1">Record the day&apos;s trips without the notebook.</p>
+      </footer>
     </div>
   );
 }

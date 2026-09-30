@@ -82,7 +82,7 @@ export function SalaryPageClient() {
                 ? salaryRemaining(row.month.gross_salary, row.advances, row.payments)
                 : null;
               return (
-                <li key={row.driver.id} className="rounded-lg border border-border bg-card p-4">
+                <li key={row.driver.id} className="rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] p-4">
                   <Link
                     href={`/dashboard/drivers/${row.driver.id}`}
                     className="font-semibold text-primary hover:underline"
@@ -99,7 +99,7 @@ export function SalaryPageClient() {
             })}
           </ul>
 
-          <div className="hidden overflow-hidden rounded-lg border border-border bg-card md:block">
+          <div className="hidden overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border bg-muted/50 text-muted-foreground">
                 <tr>

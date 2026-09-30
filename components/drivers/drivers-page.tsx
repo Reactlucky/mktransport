@@ -22,6 +22,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog } from "@/components/ui/dialog";
 import { DriverForm } from "@/components/drivers/driver-form";
 import { useToast } from "@/components/providers/toast-provider";
+import { listOpenAssignments } from "@/lib/services/assignments";
+
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
 
 export function DriversPageClient() {
   const { toast } = useToast();
@@ -37,6 +47,20 @@ export function DriversPageClient() {
     queryFn: () => listDrivers(search || undefined, status),
     staleTime: 60_000,
   });
+
+  const openAssignments = useQuery({
+    queryKey: ["assignments", "open"],
+    queryFn: listOpenAssignments,
+    staleTime: 30_000,
+    retry: false,
+  });
+
+  const truckByDriver = new Map(
+    (openAssignments.data ?? []).map((row) => [
+      row.driver_id,
+      row.trucks?.registration_number ?? "",
+    ])
+  );
 
   const createMutation = useMutation({
     mutationFn: createDriver,
@@ -174,10 +198,14 @@ export function DriversPageClient() {
             {query.data.map((d) => (
               <article
                 key={d.id}
-                className="flex cursor-pointer items-center justify-between rounded-lg border border-border bg-card p-4 hover:bg-muted/40"
+                className="flex cursor-pointer items-center justify-between rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] p-4 hover:bg-muted/40"
                 onClick={() => router.push(`/dashboard/drivers/${d.id}`)}
               >
-                <div>
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent font-display text-sm font-semibold text-accent-foreground">
+                    {initials(d.name)}
+                  </span>
+                  <div className="min-w-0">
                   <Link
                     href={`/dashboard/drivers/${d.id}`}
                     className="font-semibold text-primary hover:underline"
@@ -189,6 +217,12 @@ export function DriversPageClient() {
                     {d.phone || "No phone"}
                     {d.salary > 0 ? ` · ${formatCurrency(d.salary)}` : ""}
                   </p>
+                  {truckByDriver.get(d.id) && (
+                    <p className="text-xs text-muted-foreground">
+                      {truckByDriver.get(d.id)}
+                    </p>
+                  )}
+                  </div>
                 </div>
                 <div
                   className="flex flex-col items-end gap-2"
@@ -220,7 +254,7 @@ export function DriversPageClient() {
             ))}
           </div>
 
-          <div className="hidden overflow-hidden rounded-lg border border-border bg-card md:block">
+          <div className="hidden overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border bg-muted/50 text-muted-foreground">
                 <tr>
@@ -239,13 +273,25 @@ export function DriversPageClient() {
                     onClick={() => router.push(`/dashboard/drivers/${d.id}`)}
                   >
                     <td className="px-4 py-3 font-medium">
-                      <Link
-                        href={`/dashboard/drivers/${d.id}`}
-                        className="text-primary hover:underline"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {d.name}
-                      </Link>
+                      <div className="flex items-center gap-3">
+                        <span className="flex size-9 items-center justify-center rounded-full bg-accent font-display text-xs font-semibold text-accent-foreground">
+                          {initials(d.name)}
+                        </span>
+                        <div>
+                          <Link
+                            href={`/dashboard/drivers/${d.id}`}
+                            className="text-primary hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {d.name}
+                          </Link>
+                          {truckByDriver.get(d.id) && (
+                            <p className="text-xs font-normal text-muted-foreground">
+                              {truckByDriver.get(d.id)}
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     </td>
                     <td className="px-4 py-3">{d.phone || "—"}</td>
                     <td className="px-4 py-3">{formatCurrency(d.salary)}</td>

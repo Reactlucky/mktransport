@@ -9,6 +9,13 @@ export const truckSchema = z.object({
   model: z.string().trim().max(100).optional().or(z.literal("")),
   status: z.enum(["available", "running", "maintenance"]),
   is_active: z.boolean(),
+  registration_date: z.string().optional().or(z.literal("")),
+  fitness_valid_until: z.string().optional().or(z.literal("")),
+  tax_valid_until: z.string().optional().or(z.literal("")),
+  tax_is_lifetime: z.boolean(),
+  insurance_valid_until: z.string().optional().or(z.literal("")),
+  pucc_valid_until: z.string().optional().or(z.literal("")),
+  emi_due_on: z.string().optional().or(z.literal("")),
 });
 
 export const customerSchema = z.object({

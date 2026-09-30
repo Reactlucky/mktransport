@@ -33,6 +33,21 @@ export function TruckForm({
     initial?.status ?? "available"
   );
   const [is_active, setActive] = useState(initial?.is_active ?? true);
+  const [registration_date, setRegistrationDate] = useState(
+    initial?.registration_date ?? ""
+  );
+  const [fitness_valid_until, setFitness] = useState(
+    initial?.fitness_valid_until ?? ""
+  );
+  const [tax_valid_until, setTax] = useState(initial?.tax_valid_until ?? "");
+  const [tax_is_lifetime, setLifetimeTax] = useState(
+    initial?.tax_is_lifetime ?? false
+  );
+  const [insurance_valid_until, setInsurance] = useState(
+    initial?.insurance_valid_until ?? ""
+  );
+  const [pucc_valid_until, setPucc] = useState(initial?.pucc_valid_until ?? "");
+  const [emi_due_on, setEmi] = useState(initial?.emi_due_on ?? "");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
@@ -46,6 +61,13 @@ export function TruckForm({
       model,
       status,
       is_active,
+      registration_date,
+      fitness_valid_until,
+      tax_valid_until,
+      tax_is_lifetime,
+      insurance_valid_until,
+      pucc_valid_until,
+      emi_due_on,
     });
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
@@ -117,6 +139,74 @@ export function TruckForm({
         />
         Active
       </label>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="registration_date">Registration date</Label>
+          <Input
+            id="registration_date"
+            type="date"
+            value={registration_date ?? ""}
+            onChange={(e) => setRegistrationDate(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="fitness_valid_until">Fitness valid up to</Label>
+          <Input
+            id="fitness_valid_until"
+            type="date"
+            value={fitness_valid_until ?? ""}
+            onChange={(e) => setFitness(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="tax_valid_until">Tax valid up to</Label>
+          <Input
+            id="tax_valid_until"
+            type="date"
+            value={tax_is_lifetime ? "" : (tax_valid_until ?? "")}
+            onChange={(e) => setTax(e.target.value)}
+            disabled={tax_is_lifetime}
+          />
+        </div>
+        <div className="flex items-end">
+          <label className="flex items-center gap-2 pb-3 text-sm">
+            <input
+              type="checkbox"
+              checked={tax_is_lifetime}
+              onChange={(e) => setLifetimeTax(e.target.checked)}
+              className="size-4 rounded border-input"
+            />
+            Lifetime tax (LTT)
+          </label>
+        </div>
+        <div>
+          <Label htmlFor="insurance_valid_until">Insurance valid up to</Label>
+          <Input
+            id="insurance_valid_until"
+            type="date"
+            value={insurance_valid_until ?? ""}
+            onChange={(e) => setInsurance(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="pucc_valid_until">PUCC valid up to</Label>
+          <Input
+            id="pucc_valid_until"
+            type="date"
+            value={pucc_valid_until ?? ""}
+            onChange={(e) => setPucc(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="emi_due_on">EMI date</Label>
+          <Input
+            id="emi_due_on"
+            type="date"
+            value={emi_due_on ?? ""}
+            onChange={(e) => setEmi(e.target.value)}
+          />
+        </div>
+      </div>
       {formError && (
         <p className="text-sm text-danger" role="alert">
           {formError}

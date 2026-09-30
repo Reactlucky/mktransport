@@ -76,7 +76,7 @@ export function PageHeader({
   return (
     <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight">
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-navy">
           {title}
         </h1>
         {description && (
@@ -98,7 +98,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold",
         active
           ? "bg-success-muted text-success"
           : "bg-muted text-muted-foreground"

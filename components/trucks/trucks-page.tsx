@@ -22,6 +22,7 @@ import { TruckForm } from "@/components/trucks/truck-form";
 import { useToast } from "@/components/providers/toast-provider";
 import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { listOpenAssignments } from "@/lib/services/assignments";
 
 const statusLabel: Record<TruckStatus, string> = {
   available: "Available",
@@ -48,6 +49,17 @@ export function TrucksPageClient() {
     queryFn: () => listTrucks(search || undefined),
     staleTime: 60_000,
   });
+
+  const openAssignments = useQuery({
+    queryKey: ["assignments", "open"],
+    queryFn: listOpenAssignments,
+    staleTime: 30_000,
+    retry: false,
+  });
+
+  const driverByTruck = new Map(
+    (openAssignments.data ?? []).map((row) => [row.truck_id, row.drivers?.name ?? ""])
+  );
 
   const createMutation = useMutation({
     mutationFn: createTruck,
@@ -177,7 +189,7 @@ export function TrucksPageClient() {
             {query.data.map((truck) => (
               <article
                 key={truck.id}
-                className="cursor-pointer rounded-lg border border-border bg-card p-4 hover:bg-muted/40"
+                className="cursor-pointer rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] p-4 hover:bg-muted/40"
                 onClick={() => router.push(`/dashboard/trucks/${truck.id}`)}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -191,6 +203,9 @@ export function TrucksPageClient() {
                     </Link>
                     <p className="text-sm text-muted-foreground">
                       {truck.model || "No model"}
+                      {driverByTruck.get(truck.id)
+                        ? ` · ${driverByTruck.get(truck.id)}`
+                        : ""}
                     </p>
                   </div>
                   <StatusBadge active={truck.is_active} />
@@ -229,7 +244,7 @@ export function TrucksPageClient() {
             ))}
           </div>
 
-          <div className="hidden overflow-hidden rounded-lg border border-border bg-card md:block">
+          <div className="hidden overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border bg-muted/50 text-muted-foreground">
                 <tr>
@@ -256,7 +271,14 @@ export function TrucksPageClient() {
                         {truck.registration_number}
                       </Link>
                     </td>
-                    <td className="px-4 py-3">{truck.model || "—"}</td>
+                    <td className="px-4 py-3">
+                      <p>{truck.model || "—"}</p>
+                      {driverByTruck.get(truck.id) && (
+                        <p className="text-xs text-muted-foreground">
+                          {driverByTruck.get(truck.id)}
+                        </p>
+                      )}
+                    </td>
                     <td className="px-4 py-3">
                       <span
                         className={cn(

@@ -1,57 +1,86 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Plus } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Menu, Moon, Search, Settings, Sun, X } from "lucide-react";
 import { Sidebar } from "./sidebar";
 import { MobileBottomNav } from "./mobile-nav";
-import { OfflineBanner } from "@/components/providers/offline-banner";
+import { CommandSearch } from "./command-search";
 import { Button } from "@/components/ui/button";
-import { TruckIcon } from "@/components/icons/transport";
-import { cn } from "@/lib/utils";
+
+const titles: Record<string, string> = {
+  "/dashboard": "Dashboard",
+  "/dashboard/trips": "Trips",
+  "/dashboard/trips/new": "Add Trip",
+  "/dashboard/trucks": "Trucks",
+  "/dashboard/customers": "Customers",
+  "/dashboard/drivers": "Drivers",
+  "/dashboard/attendance": "Attendance",
+  "/dashboard/salary": "Salaries",
+  "/dashboard/reports": "Reports",
+  "/dashboard/settings": "Settings",
+};
+
+function pageTitle(pathname: string) {
+  if (titles[pathname]) return titles[pathname];
+  if (pathname.includes("/trips/") && pathname.endsWith("/edit")) return "Edit Trip";
+  if (pathname.startsWith("/dashboard/trucks/")) return "Truck";
+  if (pathname.startsWith("/dashboard/customers/")) return "Customer";
+  if (pathname.startsWith("/dashboard/drivers/")) return "Driver";
+  return "MK Transport";
+}
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const showAddTrip =
-    !pathname.startsWith("/dashboard/trips/new") &&
-    !pathname.includes("/edit");
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
-    <div className="flex min-h-dvh bg-background">
-      <div className="hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:shrink-0">
-        <Sidebar collapsed={collapsed} />
+    <div className="flex min-h-dvh">
+      <div className="sticky top-0 hidden h-dvh shrink-0 p-3 lg:block">
+        <Sidebar collapsed={collapsed} floating />
       </div>
 
-      {sidebarOpen && (
-        <button
-          type="button"
-          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
-          aria-label="Close menu"
-          onClick={() => setSidebarOpen(false)}
-        />
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-[#070b14]/40 backdrop-blur-sm"
+            aria-label="Close menu"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="absolute inset-y-3 left-3 z-10">
+            <Sidebar onNavigate={() => setMobileOpen(false)} floating />
+          </div>
+        </div>
       )}
-      <div
-        className={cn(
-          "fixed inset-y-0 left-0 z-50 transition-transform lg:hidden",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        <Sidebar onNavigate={() => setSidebarOpen(false)} />
-      </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <OfflineBanner />
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-card/95 px-4 backdrop-blur lg:h-16 lg:px-6">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border/70 bg-background/70 px-3 backdrop-blur-xl sm:px-5">
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="size-10 lg:hidden"
-            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden"
+            onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
           >
             <Menu className="size-5" />
@@ -60,39 +89,60 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             type="button"
             variant="ghost"
             size="icon"
-            className="hidden size-10 lg:inline-flex"
+            className="hidden lg:inline-flex"
             onClick={() => setCollapsed((c) => !c)}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? <Menu className="size-5" /> : <X className="size-5" />}
           </Button>
-
-          <div className="flex items-center gap-2 lg:hidden">
-            <TruckIcon className="size-5 text-primary" />
-            <span className="font-display text-sm font-semibold">
-              MK Transport
-            </span>
-          </div>
-
-          <div className="ml-auto flex items-center gap-2">
-            {showAddTrip && (
-              <Link
-                href="/dashboard/trips/new"
-                className="hidden h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover sm:inline-flex"
-              >
-                <Plus className="size-4" />
-                Add Trip
-              </Link>
+          <h1 className="min-w-0 flex-1 truncate font-display text-lg font-semibold tracking-tight">
+            {pageTitle(pathname)}
+          </h1>
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            className="hidden h-10 items-center gap-2 rounded-full border border-border bg-card/70 px-3 text-sm text-muted-foreground shadow-[var(--shadow-soft)] sm:inline-flex"
+          >
+            <Search className="size-4" />
+            Search
+            <kbd className="rounded-md bg-muted px-1.5 py-0.5 text-[11px]">⌘K</kbd>
+          </button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="sm:hidden"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Search"
+          >
+            <Search className="size-5" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label="Toggle theme"
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+          >
+            {mounted && resolvedTheme === "dark" ? (
+              <Sun className="size-5" />
+            ) : (
+              <Moon className="size-5" />
             )}
-          </div>
+          </Button>
+          <Link
+            href="/dashboard/settings"
+            className="inline-flex size-11 items-center justify-center rounded-[14px] text-foreground hover:bg-muted"
+            aria-label="Settings"
+          >
+            <Settings className="size-5" />
+          </Link>
         </header>
-
-        <main className="flex-1 px-4 py-5 pb-24 md:px-6 md:pb-8 lg:px-8">
-          {children}
-        </main>
+        <main className="flex-1 px-3 py-5 pb-28 sm:px-5 lg:pb-8">{children}</main>
       </div>
 
-      <MobileBottomNav onMore={() => setSidebarOpen(true)} />
+      <MobileBottomNav onMore={() => setMobileOpen(true)} />
+      <CommandSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
   );
 }

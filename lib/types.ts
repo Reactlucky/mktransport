@@ -6,6 +6,13 @@ export interface Truck {
   model: string | null;
   status: TruckStatus;
   is_active: boolean;
+  registration_date: string | null;
+  fitness_valid_until: string | null;
+  tax_valid_until: string | null;
+  tax_is_lifetime: boolean;
+  insurance_valid_until: string | null;
+  pucc_valid_until: string | null;
+  emi_due_on: string | null;
   created_at: string;
   updated_at: string;
 }

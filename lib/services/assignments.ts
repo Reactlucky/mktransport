@@ -39,6 +39,23 @@ function normalizeAssignment(row: Record<string, unknown>): DriverAssignment {
   };
 }
 
+export async function listOpenAssignments(): Promise<DriverAssignment[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("driver_assignments")
+    .select(ASSIGNMENT_SELECT)
+    .is("ended_on", null);
+
+  if (error) {
+    throw new Error(
+      getUserFacingError(error, "Unable to load assignments. Please try again.")
+    );
+  }
+  return ((data ?? []) as unknown[]).map((row) =>
+    normalizeAssignment(row as Record<string, unknown>)
+  );
+}
+
 export async function listAssignments(filter: {
   driverId?: string;
   truckId?: string;

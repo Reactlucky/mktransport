@@ -9,7 +9,7 @@ export const Select = forwardRef<
     <select
       ref={ref}
       className={cn(
-        "flex h-11 w-full appearance-none rounded-md border border-input bg-card bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat px-3 pr-10 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "flex h-12 w-full appearance-none rounded-[14px] border border-input bg-muted/80 bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat px-3 pr-10 text-base text-foreground focus-visible:border-primary focus-visible:bg-card focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
         className
       )}
       style={{

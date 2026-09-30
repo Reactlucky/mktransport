@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Driver, DriverStatusFilter } from "@/lib/types";
 import type { DriverInput } from "@/lib/validations";
 import { getUserFacingError } from "@/lib/utils";
+import { currentMonthRange } from "@/lib/services/trucks";
 
 const DRIVER_COLS =
   "id, name, phone, address, joining_date, salary, notes, is_active, created_at, updated_at";
@@ -105,4 +106,50 @@ export async function updateDriver(
     );
   }
   return normalizeDriver(data as Driver);
+}
+
+export async function countDriverTripsThisMonth(driverId: string): Promise<number> {
+  const supabase = createClient();
+  const { start, end } = currentMonthRange();
+  const { data: assignments, error: assignmentError } = await supabase
+    .from("driver_assignments")
+    .select("truck_id, started_on, ended_on")
+    .eq("driver_id", driverId)
+    .lte("started_on", end)
+    .or(`ended_on.is.null,ended_on.gte.${start}`);
+
+  if (assignmentError) {
+    throw new Error(
+      getUserFacingError(assignmentError, "Unable to count this month's trips.")
+    );
+  }
+
+  const rows = assignments ?? [];
+  const truckIds = [...new Set(rows.map((row) => row.truck_id as string))];
+  if (truckIds.length === 0) return 0;
+
+  const { data: trips, error } = await supabase
+    .from("trips")
+    .select("trip_date, truck_id")
+    .in("truck_id", truckIds)
+    .gte("trip_date", start)
+    .lte("trip_date", end);
+
+  if (error) {
+    throw new Error(getUserFacingError(error, "Unable to count this month's trips."));
+  }
+
+  return (trips ?? []).filter((trip) =>
+    rows.some((assignment) => {
+      if (assignment.truck_id !== trip.truck_id) return false;
+      if ((trip.trip_date as string) < (assignment.started_on as string)) return false;
+      if (
+        assignment.ended_on &&
+        (trip.trip_date as string) > (assignment.ended_on as string)
+      ) {
+        return false;
+      }
+      return true;
+    })
+  ).length;
 }

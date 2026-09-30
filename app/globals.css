@@ -1,59 +1,70 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f8fa;
-  --foreground: #1a1d23;
+  --background: #f5f7fa;
+  --foreground: #0b1f3a;
   --card: #ffffff;
-  --card-foreground: #1a1d23;
-  --muted: #eef1f5;
-  --muted-foreground: #5c6573;
-  --border: #dce1e8;
-  --input: #dce1e8;
-  --primary: #1b4f8a;
+  --card-foreground: #0b1f3a;
+  --muted: #f8fafc;
+  --muted-foreground: #5b6b80;
+  --border: rgba(15, 23, 42, 0.06);
+  --input: rgba(15, 23, 42, 0.08);
+  --primary: #3b82f6;
   --primary-foreground: #ffffff;
-  --primary-hover: #163f6e;
-  --accent: #e8f0f8;
-  --accent-foreground: #1b4f8a;
-  --success: #1a7a4c;
-  --success-muted: #e6f5ee;
-  --warning: #9a6b12;
-  --warning-muted: #fef6e6;
-  --danger: #b42318;
-  --danger-muted: #fef3f2;
-  --ring: #1b4f8a;
-  --sidebar: #0f2744;
-  --sidebar-foreground: #e8eef6;
-  --sidebar-muted: #8fa3bc;
-  --sidebar-active: #1b4f8a;
-  --shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --primary-hover: #2563eb;
+  --navy: #0b1f3a;
+  --accent: #eff6ff;
+  --accent-foreground: #1d4ed8;
+  --success: #16a34a;
+  --success-muted: rgba(34, 197, 94, 0.1);
+  --warning: #d97706;
+  --warning-muted: rgba(245, 158, 11, 0.1);
+  --danger: #dc2626;
+  --danger-muted: rgba(239, 68, 68, 0.1);
+  --ring: #3b82f6;
+  --sidebar: rgba(255, 255, 255, 0.72);
+  --sidebar-foreground: #0b1f3a;
+  --sidebar-muted: #5b6b80;
+  --sidebar-active: #dbeafe;
+  --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 8px 30px rgba(15, 23, 42, 0.05);
+  --shadow-floating: 0 12px 40px rgba(15, 23, 42, 0.08);
+  --radius-sm: 12px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-2xl: 28px;
 }
 
 .dark {
-  --background: #0c1017;
-  --foreground: #e8ecf2;
-  --card: #151b26;
-  --card-foreground: #e8ecf2;
-  --muted: #1c2433;
-  --muted-foreground: #9aa6b8;
-  --border: #2a3447;
-  --input: #2a3447;
-  --primary: #4d8fd6;
-  --primary-foreground: #0c1017;
-  --primary-hover: #6aa3e0;
-  --accent: #1a2d45;
-  --accent-foreground: #9ec5ef;
-  --success: #3dd68c;
-  --success-muted: #123025;
-  --warning: #f5c14a;
-  --warning-muted: #2e2510;
-  --danger: #f97066;
-  --danger-muted: #2f1513;
-  --ring: #4d8fd6;
-  --sidebar: #0a0e14;
-  --sidebar-foreground: #e8ecf2;
-  --sidebar-muted: #7d8ca3;
-  --sidebar-active: #1e3a5f;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --background: #070b14;
+  --foreground: #e8eef8;
+  --card: #0d1422;
+  --card-foreground: #e8eef8;
+  --muted: #111a2a;
+  --muted-foreground: #93a4bd;
+  --border: rgba(255, 255, 255, 0.07);
+  --input: rgba(255, 255, 255, 0.1);
+  --primary: #60a5fa;
+  --primary-foreground: #070b14;
+  --primary-hover: #93c5fd;
+  --navy: #e8eef8;
+  --accent: rgba(59, 130, 246, 0.16);
+  --accent-foreground: #93c5fd;
+  --success: #4ade80;
+  --success-muted: rgba(34, 197, 94, 0.14);
+  --warning: #fbbf24;
+  --warning-muted: rgba(245, 158, 11, 0.14);
+  --danger: #f87171;
+  --danger-muted: rgba(239, 68, 68, 0.14);
+  --ring: #60a5fa;
+  --sidebar: rgba(13, 20, 34, 0.78);
+  --sidebar-foreground: #e8eef8;
+  --sidebar-muted: #93a4bd;
+  --sidebar-active: rgba(59, 130, 246, 0.22);
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.28);
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.28);
+  --shadow-floating: 0 16px 48px rgba(0, 0, 0, 0.4);
 }
 
 @theme inline {
@@ -68,6 +79,7 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--primary-hover);
+  --color-navy: var(--navy);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-success: var(--success);
@@ -83,7 +95,11 @@
   --color-sidebar-active: var(--sidebar-active);
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
-  --shadow-sm: var(--shadow);
+  --shadow-sm: var(--shadow-soft);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
 }
 
 * {
@@ -95,21 +111,79 @@ html {
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgba(59, 130, 246, 0.08), transparent 55%),
+    var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
+.dark body {
+  background:
+    radial-gradient(900px 420px at 80% -10%, rgba(59, 130, 246, 0.16), transparent 50%),
+    var(--background);
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
 ::selection {
-  background: color-mix(in srgb, var(--primary) 25%, transparent);
+  background: color-mix(in srgb, var(--primary) 28%, transparent);
 }
 
 :focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 2px solid color-mix(in srgb, var(--ring) 70%, transparent);
   outline-offset: 2px;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0.6;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.dialog-panel {
+  animation: rise-in 200ms ease;
+}
+
+tbody tr:hover {
+  background: color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+thead th {
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .dialog-panel,
+  .motion-lift {
+    animation: none !important;
+    transition: none !important;
+  }
 }

@@ -11,7 +11,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-lg border border-border bg-card text-card-foreground shadow-sm",
+        "rounded-[20px] border border-border bg-card text-card-foreground shadow-[var(--shadow-card)] transition duration-200 motion-lift hover:-translate-y-0.5 hover:shadow-[var(--shadow-floating)]",
         className
       )}
     >
@@ -28,7 +28,7 @@ export function CardHeader({
   children: ReactNode;
 }) {
   return (
-    <div className={cn("border-b border-border px-4 py-3 md:px-5", className)}>
+    <div className={cn("px-5 py-4 md:px-6", className)}>
       {children}
     </div>
   );
@@ -41,5 +41,5 @@ export function CardContent({
   className?: string;
   children: ReactNode;
 }) {
-  return <div className={cn("p-4 md:p-5", className)}>{children}</div>;
+  return <div className={cn("p-5 md:p-6", className)}>{children}</div>;
 }

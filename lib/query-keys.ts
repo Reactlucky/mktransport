@@ -4,6 +4,7 @@ export const queryKeys = {
     list: (search?: string) => ["trucks", "list", search ?? ""] as const,
     detail: (id: string) => ["trucks", "detail", id] as const,
     trips: (id: string) => ["trucks", "trips", id] as const,
+    monthTrips: (id: string) => ["trucks", "monthTrips", id] as const,
     assignments: (id: string) => ["trucks", "assignments", id] as const,
     active: ["trucks", "active"] as const,
   },
@@ -24,6 +25,7 @@ export const queryKeys = {
       ["drivers", "attendance", id, month] as const,
     salary: (id: string, month: string) =>
       ["drivers", "salary", id, month] as const,
+    monthTrips: (id: string) => ["drivers", "monthTrips", id] as const,
   },
   trips: {
     all: ["trips"] as const,
@@ -37,6 +39,7 @@ export const queryKeys = {
     all: ["dashboard"] as const,
     truckSummary: ["dashboard", "truckSummary"] as const,
     monthly: ["dashboard", "monthly"] as const,
+    reminders: ["dashboard", "reminders"] as const,
   },
   attendance: {
     day: (date: string) => ["attendance", "day", date] as const,

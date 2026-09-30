@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { getTruck, getTruckTrips, updateTruck } from "@/lib/services/trucks";
+import { getTruck, getTruckTrips, countTruckTripsThisMonth, updateTruck } from "@/lib/services/trucks";
 import { queryKeys } from "@/lib/query-keys";
 import type { TruckStatus } from "@/lib/types";
 import {
@@ -20,7 +20,8 @@ import { TruckForm } from "@/components/trucks/truck-form";
 import { RelatedTrips } from "@/components/trips/related-trips";
 import { AssignmentHistory } from "@/components/drivers/assignment-history";
 import { useToast } from "@/components/providers/toast-provider";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
+import { vehicleAge } from "@/lib/calculations/papers";
 
 const statusLabel: Record<TruckStatus, string> = {
   available: "Available",
@@ -47,6 +48,12 @@ export function TruckDetailPage({ id }: { id: string }) {
   const tripsQuery = useQuery({
     queryKey: queryKeys.trucks.trips(id),
     queryFn: () => getTruckTrips(id),
+    enabled: truckQuery.isSuccess,
+  });
+
+  const monthTrips = useQuery({
+    queryKey: queryKeys.trucks.monthTrips(id),
+    queryFn: () => countTruckTripsThisMonth(id),
     enabled: truckQuery.isSuccess,
   });
 
@@ -128,6 +135,63 @@ export function TruckDetailPage({ id }: { id: string }) {
             <p className="text-xs text-muted-foreground">Active</p>
             <p className="mt-1">
               <StatusBadge active={truck.is_active} />
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Trips this month</p>
+            <p className="mt-0.5 font-display text-lg font-semibold tabular">
+              {monthTrips.isLoading ? "…" : monthTrips.data ?? "—"}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-6">
+        <CardContent className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <p className="text-xs text-muted-foreground">Vehicle age</p>
+            <p className="mt-0.5 text-sm font-medium">
+              {truck.registration_date ? vehicleAge(truck.registration_date) : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Registration date</p>
+            <p className="mt-0.5 text-sm font-medium">
+              {truck.registration_date ? formatDate(truck.registration_date) : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Fitness valid up to</p>
+            <p className="mt-0.5 text-sm font-medium">
+              {truck.fitness_valid_until ? formatDate(truck.fitness_valid_until) : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Tax valid up to</p>
+            <p className="mt-0.5 text-sm font-medium">
+              {truck.tax_is_lifetime
+                ? "LTT"
+                : truck.tax_valid_until
+                  ? formatDate(truck.tax_valid_until)
+                  : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Insurance valid up to</p>
+            <p className="mt-0.5 text-sm font-medium">
+              {truck.insurance_valid_until ? formatDate(truck.insurance_valid_until) : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">PUCC valid up to</p>
+            <p className="mt-0.5 text-sm font-medium">
+              {truck.pucc_valid_until ? formatDate(truck.pucc_valid_until) : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">EMI date</p>
+            <p className="mt-0.5 text-sm font-medium">
+              {truck.emi_due_on ? formatDate(truck.emi_due_on) : "—"}
             </p>
           </div>
         </CardContent>

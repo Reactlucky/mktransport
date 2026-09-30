@@ -206,7 +206,7 @@ export function TripsPageClient() {
         </Button>
       </div>
 
-      <div className="mb-4 hidden rounded-lg border border-border bg-card p-4 lg:block">
+      <div className="mb-4 hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] p-4 lg:block">
         {filterFields}
         {filterSummary && (
           <Button
@@ -270,7 +270,7 @@ export function TripsPageClient() {
           </div>
 
           {/* Desktop table */}
-          <div className="hidden overflow-hidden rounded-lg border border-border bg-card md:block">
+          <div className="hidden overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead className="border-b border-border bg-muted/50 text-muted-foreground">

@@ -41,10 +41,10 @@ export function Dialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6">
       <button
         type="button"
-        className="absolute inset-0 bg-black/40"
+        className="absolute inset-0 bg-[#070b14]/40 backdrop-blur-sm"
         aria-label="Close dialog"
         onClick={onClose}
       />
@@ -54,15 +54,16 @@ export function Dialog({
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
-          "relative z-10 flex w-full max-h-[92vh] flex-col overflow-hidden border border-border bg-card shadow-sm",
+          "dialog-panel relative z-10 flex w-full max-h-[92vh] flex-col overflow-hidden border border-border bg-card shadow-[var(--shadow-floating)]",
           fullScreenMobile
-            ? "h-full max-h-full rounded-none sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-xl"
-            : "max-w-lg rounded-t-xl sm:rounded-xl",
+            ? "h-full max-h-full rounded-none sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-[24px]"
+            : "max-w-lg rounded-t-[24px] sm:rounded-[24px]",
           className
         )}
       >
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h2 id={titleId} className="text-lg font-semibold">
+        <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-border sm:hidden" aria-hidden />
+        <div className="flex items-center justify-between px-6 py-4">
+          <h2 id={titleId} className="font-display text-lg font-semibold tracking-tight">
             {title}
           </h2>
           <Button
@@ -76,7 +77,7 @@ export function Dialog({
             <X className="size-5" />
           </Button>
         </div>
-        <div className="flex-1 overflow-y-auto p-4">{children}</div>
+        <div className="flex-1 overflow-y-auto px-6 pb-6">{children}</div>
       </div>
     </div>
   );

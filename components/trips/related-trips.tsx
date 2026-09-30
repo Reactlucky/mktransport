@@ -40,7 +40,7 @@ export function RelatedTrips({
       )}
 
       {!isLoading && !isError && (trips?.length ?? 0) === 0 && (
-        <p className="rounded-lg border border-border bg-card px-4 py-6 text-sm text-muted-foreground">
+        <p className="rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] px-4 py-6 text-sm text-muted-foreground">
           No trips yet.
         </p>
       )}
@@ -52,7 +52,7 @@ export function RelatedTrips({
               <li key={trip.id}>
                 <Link
                   href={`/dashboard/trips/${trip.id}/edit`}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm hover:bg-muted/40"
+                  className="flex items-center justify-between gap-3 rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] px-4 py-3 text-sm hover:bg-muted/40"
                 >
                   <span>
                     <span className="block font-medium">
@@ -68,7 +68,7 @@ export function RelatedTrips({
             ))}
           </ul>
 
-          <div className="hidden overflow-hidden rounded-lg border border-border bg-card md:block">
+          <div className="hidden overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border bg-muted/50 text-muted-foreground">
                 <tr>
