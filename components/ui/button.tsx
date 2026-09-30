@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
 import { ButtonHTMLAttributes, forwardRef } from "react";
+import { WheelLoader } from "./wheel-loader";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger" | "outline";
 type Size = "sm" | "md" | "lg" | "icon";
@@ -55,7 +55,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || loading}
         {...props}
       >
-        {loading && <Loader2 className="size-4 animate-spin" aria-hidden />}
+        {loading && (
+          <WheelLoader
+            className="size-5 shrink-0"
+            tone={variant === "primary" ? "light" : "brand"}
+          />
+        )}
         {children}
       </button>
     );

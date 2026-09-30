@@ -35,7 +35,7 @@ export function MobileBottomNav({ onMore }: { onMore: () => void }) {
                 <button
                   type="button"
                   onClick={onMore}
-                  className="flex w-full flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium text-muted-foreground"
+                  className="flex w-full flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium text-muted-foreground transition-colors duration-200 active:scale-95"
                 >
                   <Icon className="size-5" />
                   More
@@ -49,7 +49,7 @@ export function MobileBottomNav({ onMore }: { onMore: () => void }) {
               <li key={item.label} className="relative flex justify-center">
                 <Link
                   href={item.href}
-                  className="-mt-5 flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-[#2563eb] to-[#60a5fa] text-white shadow-[0_10px_24px_rgba(37,99,235,0.35)]"
+                  className="-mt-5 flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-[#2563eb] to-[#60a5fa] text-white shadow-[0_10px_24px_rgba(37,99,235,0.35)] transition duration-200 active:scale-95"
                   aria-label="Add Trip"
                 >
                   <Plus className="size-7" strokeWidth={2.25} />
@@ -63,7 +63,7 @@ export function MobileBottomNav({ onMore }: { onMore: () => void }) {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium",
+                  "flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition duration-200 active:scale-95",
                   active ? "text-primary" : "text-muted-foreground"
                 )}
               >

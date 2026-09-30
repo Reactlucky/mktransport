@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/providers/toast-provider";
 import { Moon, Sun, Monitor, LogOut } from "lucide-react";
+import { markThemeManual } from "@/components/providers/theme-provider";
 
 export function SettingsPageClient() {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -43,7 +44,12 @@ export function SettingsPageClient() {
     }
   }
 
-  const currentTheme = theme ?? "system";
+  const currentTheme = theme ?? "light";
+
+  function chooseTheme(next: string) {
+    markThemeManual();
+    setTheme(next);
+  }
 
   return (
     <div className="mx-auto max-w-lg">
@@ -56,7 +62,7 @@ export function SettingsPageClient() {
             <Select
               id="theme"
               value={currentTheme}
-              onChange={(e) => setTheme(e.target.value)}
+              onChange={(e) => chooseTheme(e.target.value)}
             >
               <option value="light">Light</option>
               <option value="dark">Dark</option>
@@ -70,7 +76,7 @@ export function SettingsPageClient() {
                 type="button"
                 variant={currentTheme === "light" ? "primary" : "outline"}
                 size="sm"
-                onClick={() => setTheme("light")}
+                onClick={() => chooseTheme("light")}
               >
                 <Sun className="size-4" />
                 Light
@@ -79,7 +85,7 @@ export function SettingsPageClient() {
                 type="button"
                 variant={currentTheme === "dark" ? "primary" : "outline"}
                 size="sm"
-                onClick={() => setTheme("dark")}
+                onClick={() => chooseTheme("dark")}
               >
                 <Moon className="size-4" />
                 Dark
@@ -88,7 +94,7 @@ export function SettingsPageClient() {
                 type="button"
                 variant={currentTheme === "system" ? "primary" : "outline"}
                 size="sm"
-                onClick={() => setTheme("system")}
+                onClick={() => chooseTheme("system")}
               >
                 <Monitor className="size-4" />
                 System

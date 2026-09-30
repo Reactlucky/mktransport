@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BrandMark } from "@/components/brand-mark";
 import { cn } from "@/lib/utils";
 import {
   CustomerIcon,
@@ -60,14 +61,13 @@ export function Sidebar({
         floating
           ? "rounded-[28px] border border-border bg-sidebar shadow-[var(--shadow-floating)] backdrop-blur-xl"
           : "bg-sidebar backdrop-blur-xl",
+        "transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
         collapsed ? "w-[76px]" : "w-[248px]"
       )}
     >
       <div className={cn("flex h-16 items-center px-4", collapsed && "justify-center px-2")}>
         <Link href="/dashboard" className="flex items-center gap-2.5" onClick={onNavigate}>
-          <span className="flex size-10 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]">
-            <TruckIcon className="size-5" />
-          </span>
+          <BrandMark />
           {!collapsed && (
             <span className="font-display text-base font-semibold tracking-tight">
               MK Transport

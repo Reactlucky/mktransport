@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 import {
   CustomerIcon,
   DriverIcon,
@@ -55,9 +56,7 @@ export function LandingPage() {
       <header className="sticky top-0 z-20 border-b border-border/70 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">
-            <span className="flex size-10 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] text-white">
-              <TruckIcon className="size-4" />
-            </span>
+            <BrandMark />
             <span className="font-display text-sm font-semibold tracking-tight md:text-base">
               MK Transport
             </span>
@@ -74,7 +73,7 @@ export function LandingPage() {
       {/* Hero — brand first, one headline, one sentence, one CTA, dominant illustration */}
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--accent)_0%,_transparent_55%)] opacity-70" />
-        <div className="relative mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-2 md:items-center md:px-6 md:py-16 lg:py-20">
+        <div className="relative mx-auto grid max-w-6xl gap-5 px-4 py-8 md:grid-cols-2 md:items-center md:gap-8 md:px-6 md:py-16 lg:py-20">
           <div>
             <p className="font-display text-sm font-semibold uppercase tracking-[0.14em] text-primary">
               MK Transport
@@ -101,13 +100,13 @@ export function LandingPage() {
               </a>
             </div>
           </div>
-          <div className="md:pl-4">
-            <div className="overflow-hidden rounded-[28px] border border-border bg-gradient-to-br from-[#dbeafe] via-[#eef6ff] to-white p-4 shadow-[var(--shadow-floating)] sm:p-8">
+          <div className="order-last mx-auto w-[82%] max-w-xs md:order-none md:mx-0 md:w-full md:max-w-none md:pl-4">
+            <div className="overflow-hidden rounded-[22px] bg-gradient-to-br from-[#dbeafe] via-[#eef6ff] to-white px-2 py-2.5 shadow-[var(--shadow-floating)] sm:rounded-[28px] sm:px-6 sm:py-6">
               <Image
-                src="/mk-transport-logo.png"
-                alt="MK Transport logo"
+                src="/mk-truck.png"
+                alt="MK Transport truck"
                 width={1024}
-                height={512}
+                height={373}
                 priority
                 className="h-auto w-full"
               />
@@ -192,7 +191,7 @@ export function LandingPage() {
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-4 py-8 text-sm text-muted-foreground md:flex-row md:items-center md:px-6">
           <div className="flex items-center gap-2 text-foreground">
-            <TruckIcon className="size-4 text-primary" />
+            <BrandMark className="size-7" />
             <span className="font-medium">MK Transport</span>
           </div>
           <p>Transport management for small fleets.</p>

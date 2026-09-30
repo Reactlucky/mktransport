@@ -9,6 +9,10 @@ import { Sidebar } from "./sidebar";
 import { MobileBottomNav } from "./mobile-nav";
 import { CommandSearch } from "./command-search";
 import { Button } from "@/components/ui/button";
+import { markThemeManual } from "@/components/providers/theme-provider";
+import { cn } from "@/lib/utils";
+
+const MENU_MS = 240;
 
 const titles: Record<string, string> = {
   "/dashboard": "Dashboard",
@@ -36,11 +40,25 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menu, setMenu] = useState<"closed" | "open" | "closing">("closed");
   const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (menu !== "closing") return;
+    const id = window.setTimeout(() => setMenu("closed"), MENU_MS);
+    return () => window.clearTimeout(id);
+  }, [menu]);
+
+  function openMenu() {
+    setMenu("open");
+  }
+
+  function closeMenu() {
+    setMenu((current) => (current === "open" ? "closing" : current));
+  }
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -59,16 +77,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar collapsed={collapsed} floating />
       </div>
 
-      {mobileOpen && (
+      {menu !== "closed" && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <button
             type="button"
-            className="absolute inset-0 bg-[#070b14]/40 backdrop-blur-sm"
+            className={cn(
+              "menu-overlay absolute inset-0 bg-[#070b14]/40 backdrop-blur-sm",
+              menu === "closing" && "menu-overlay-out"
+            )}
             aria-label="Close menu"
-            onClick={() => setMobileOpen(false)}
+            onClick={closeMenu}
           />
-          <div className="absolute inset-y-3 left-3 z-10">
-            <Sidebar onNavigate={() => setMobileOpen(false)} floating />
+          <div
+            className={cn(
+              "menu-drawer absolute inset-y-3 left-3 z-10",
+              menu === "closing" && "menu-drawer-out"
+            )}
+          >
+            <Sidebar onNavigate={closeMenu} floating />
           </div>
         </div>
       )}
@@ -80,7 +106,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             variant="ghost"
             size="icon"
             className="lg:hidden"
-            onClick={() => setMobileOpen(true)}
+            onClick={openMenu}
             aria-label="Open menu"
           >
             <Menu className="size-5" />
@@ -122,7 +148,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             variant="ghost"
             size="icon"
             aria-label="Toggle theme"
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            onClick={() => {
+              markThemeManual();
+              setTheme(resolvedTheme === "dark" ? "light" : "dark");
+            }}
           >
             {mounted && resolvedTheme === "dark" ? (
               <Sun className="size-5" />
@@ -141,7 +170,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main className="flex-1 px-3 py-5 pb-28 sm:px-5 lg:pb-8">{children}</main>
       </div>
 
-      <MobileBottomNav onMore={() => setMobileOpen(true)} />
+      <MobileBottomNav onMore={openMenu} />
       <CommandSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
   );

@@ -36,6 +36,11 @@ export default function RootLayout({
       <body
         className={`${display.variable} ${sans.variable} min-h-dvh font-sans antialiased`}
       >
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("mk-theme-manual")!=="1"){var t=localStorage.getItem("theme");if(!t||t==="system")localStorage.setItem("theme","light")}}catch(e){}`,
+          }}
+        />
         <ThemeProvider>
           <QueryProvider>
             <ToastProvider>{children}</ToastProvider>

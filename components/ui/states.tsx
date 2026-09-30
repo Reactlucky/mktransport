@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
-import { AlertCircle, Inbox, Loader2 } from "lucide-react";
+import { AlertCircle, Inbox } from "lucide-react";
 import { Button } from "./button";
+import { WheelLoader } from "./wheel-loader";
 
 export function EmptyState({
   title,
@@ -54,11 +55,11 @@ export function InlineLoading({ label = "Loading..." }: { label?: string }) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground"
+        "flex flex-col items-center justify-center gap-3 py-12 text-sm text-muted-foreground"
       )}
       role="status"
     >
-      <Loader2 className="size-4 animate-spin" />
+      <WheelLoader className="size-20" />
       <span>{label}</span>
     </div>
   );

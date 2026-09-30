@@ -8,7 +8,7 @@ import { loginSchema } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { TruckIcon } from "@/components/icons/transport";
+import { BrandMark } from "@/components/brand-mark";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -61,11 +61,9 @@ export default function LoginPage() {
     <div className="flex min-h-dvh flex-col bg-background">
       <main className="flex flex-1 flex-col items-center justify-center px-5 py-10">
         <Link href="/" className="mb-8 flex flex-col items-center text-center">
-          <span className="flex size-14 items-center justify-center rounded-[18px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] text-white shadow-[0_10px_24px_rgba(37,99,235,0.28)]">
-            <TruckIcon className="size-7" />
-          </span>
+          <BrandMark className="size-14" />
           <span className="mt-4 font-display text-4xl font-semibold tracking-tight text-navy sm:text-5xl">
-            MK Transport
+            MK TRANSPORT
           </span>
           <span className="mt-2 max-w-xs text-sm text-muted-foreground">
             Trucks, trips, drivers, and rent in one place.

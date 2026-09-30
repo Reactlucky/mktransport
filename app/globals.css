@@ -196,6 +196,84 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   animation: rise-in 200ms ease;
 }
 
+@keyframes screen-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.screen-enter {
+  animation: screen-enter 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes menu-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes menu-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes menu-drawer-in {
+  from {
+    transform: translateX(calc(-100% - 0.75rem));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes menu-drawer-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - 0.75rem));
+  }
+}
+
+.menu-overlay {
+  animation: menu-overlay-in 260ms ease-out both;
+}
+
+.menu-overlay-out {
+  animation: menu-overlay-out 220ms ease-in both;
+}
+
+.menu-drawer {
+  animation: menu-drawer-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.menu-drawer-out {
+  animation: menu-drawer-out 220ms ease-in both;
+}
+
+@keyframes wheel-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.wheel-spin {
+  transform-origin: center;
+  animation: wheel-spin 0.9s linear infinite;
+}
+
 tbody tr:hover {
   background: color-mix(in srgb, var(--accent) 70%, transparent);
 }
@@ -211,7 +289,13 @@ thead th {
   }
 
   .dialog-panel,
-  .motion-lift {
+  .motion-lift,
+  .screen-enter,
+  .menu-overlay,
+  .menu-overlay-out,
+  .menu-drawer,
+  .menu-drawer-out,
+  .wheel-spin {
     animation: none !important;
     transition: none !important;
   }
