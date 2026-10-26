@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   getCustomerWiseReport,
   getMonthlyTripSummary,
@@ -10,7 +10,8 @@ import {
 } from "@/lib/services/dashboard";
 import { queryKeys } from "@/lib/query-keys";
 import { formatCurrency } from "@/lib/utils";
-import { PageHeader, EmptyState, ErrorState } from "@/components/ui/states";
+import { AmountBars } from "@/components/charts/amount-charts";
+import { PageHeader, EmptyState, ErrorState, Refreshing } from "@/components/ui/states";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
@@ -28,18 +29,22 @@ export function ReportsPageClient() {
   }, [monthValue]);
 
   const monthly = useQuery({
-    queryKey: queryKeys.reports.monthly(year, month),
+    queryKey: queryKeys.dashboard.monthly(year, month),
     queryFn: () => getMonthlyTripSummary(year, month),
+    staleTime: 30_000,
+    placeholderData: keepPreviousData,
   });
 
   const truckWise = useQuery({
     queryKey: queryKeys.reports.truckWise(year, month),
     queryFn: () => getTruckWiseReport(year, month),
+    placeholderData: keepPreviousData,
   });
 
   const customerWise = useQuery({
     queryKey: queryKeys.reports.customerWise(year, month),
     queryFn: () => getCustomerWiseReport(year, month),
+    placeholderData: keepPreviousData,
   });
 
   return (
@@ -58,6 +63,14 @@ export function ReportsPageClient() {
           onChange={(e) => setMonthValue(e.target.value)}
         />
       </div>
+
+      <Refreshing
+        active={
+          (monthly.isFetching && !monthly.isLoading) ||
+          (truckWise.isFetching && !truckWise.isLoading) ||
+          (customerWise.isFetching && !customerWise.isLoading)
+        }
+      />
 
       <section className="mb-6">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -113,6 +126,14 @@ export function ReportsPageClient() {
         )}
         {truckWise.isSuccess && truckWise.data.length > 0 && (
           <>
+            <AmountBars
+              label="Rent by truck"
+              rows={truckWise.data.map((row) => ({
+                id: row.truck_id,
+                label: row.registration_number,
+                value: row.total_rent,
+              }))}
+            />
             <div className="space-y-2 md:hidden">
               {truckWise.data.map((row) => (
                 <Card key={row.truck_id}>
@@ -191,6 +212,14 @@ export function ReportsPageClient() {
         )}
         {customerWise.isSuccess && customerWise.data.length > 0 && (
           <>
+            <AmountBars
+              label="Rent by customer"
+              rows={customerWise.data.map((row) => ({
+                id: row.customer_id,
+                label: row.name,
+                value: row.total_rent,
+              }))}
+            />
             <div className="space-y-2 md:hidden">
               {customerWise.data.map((row) => (
                 <Card key={row.customer_id}>

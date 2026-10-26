@@ -188,22 +188,46 @@ export interface SalaryBoardRow {
   payments: number;
 }
 
+async function listSalaryMonthsWithEntries(
+  year: number,
+  month: number
+): Promise<Array<DriverSalaryMonth & { driver_pay_entries: DriverPayEntry[] }>> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("driver_salary_months")
+    .select(`${MONTH_COLS}, driver_pay_entries ( ${ENTRY_COLS} )`)
+    .eq("year", year)
+    .eq("month", month);
+
+  if (error) {
+    throw new Error(
+      getUserFacingError(error, "Unable to load salaries. Please try again.")
+    );
+  }
+
+  return (
+    (data ?? []) as Array<
+      DriverSalaryMonth & { driver_pay_entries?: DriverPayEntry[] | null }
+    >
+  ).map((row) => ({
+    ...normalizeMonth(row),
+    driver_pay_entries: (row.driver_pay_entries ?? []).map(normalizeEntry),
+  }));
+}
+
 export async function getSalaryBoard(
   year: number,
   month: number
 ): Promise<SalaryBoardRow[]> {
   const [drivers, months] = await Promise.all([
     listDrivers(),
-    listSalaryMonths(year, month),
+    listSalaryMonthsWithEntries(year, month),
   ]);
-  const entries = await listPayEntriesForMonths(months.map((row) => row.id));
   const monthByDriver = new Map(months.map((row) => [row.driver_id, row]));
 
   return drivers.map((driver) => {
     const salaryMonth = monthByDriver.get(driver.id) ?? null;
-    const monthEntries = salaryMonth
-      ? entries.filter((entry) => entry.salary_month_id === salaryMonth.id)
-      : [];
+    const monthEntries = salaryMonth?.driver_pay_entries ?? [];
     return {
       driver,
       month: salaryMonth,

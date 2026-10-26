@@ -63,7 +63,7 @@ export function LandingPage() {
           </Link>
           <Link
             href="/login"
-            className="inline-flex h-11 items-center rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-4 text-sm font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
+            className="inline-flex h-11 items-center rounded-[7px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-4 text-sm font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
           >
             Get Started
           </Link>
@@ -88,20 +88,20 @@ export function LandingPage() {
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 href="/login"
-                className="inline-flex h-12 items-center rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-6 text-base font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
+                className="inline-flex h-12 items-center rounded-[7px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-6 text-base font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
               >
                 Get Started
               </Link>
               <a
                 href="#features"
-                className="inline-flex h-12 items-center rounded-[14px] border border-border bg-card px-6 text-base font-medium shadow-[var(--shadow-soft)] hover:bg-muted"
+                className="inline-flex h-12 items-center rounded-[7px] border border-border bg-card px-6 text-base font-medium shadow-[var(--shadow-soft)] hover:bg-muted"
               >
                 See features
               </a>
             </div>
           </div>
           <div className="order-last mx-auto w-[82%] max-w-xs md:order-none md:mx-0 md:w-full md:max-w-none md:pl-4">
-            <div className="overflow-hidden rounded-[22px] bg-gradient-to-br from-[#dbeafe] via-[#eef6ff] to-white px-2 py-2.5 shadow-[var(--shadow-floating)] sm:rounded-[28px] sm:px-6 sm:py-6">
+            <div className="overflow-hidden rounded-[11px] bg-gradient-to-br from-[#dbeafe] via-[#eef6ff] to-white px-2 py-2.5 shadow-[var(--shadow-floating)] sm:rounded-[14px] sm:px-6 sm:py-6">
               <Image
                 src="/mk-truck.png"
                 alt="MK Transport truck"
@@ -127,8 +127,8 @@ export function LandingPage() {
           {features.map((f) => {
             const Icon = f.icon;
             return (
-              <div key={f.title} className="rounded-[20px] border border-border bg-card p-5 shadow-[var(--shadow-card)]">
-                <span className="mb-3 inline-flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
+              <div key={f.title} className="rounded-[10px] border border-border bg-card p-5 shadow-[var(--shadow-card)]">
+                <span className="mb-3 inline-flex size-10 items-center justify-center rounded-[3px] bg-accent text-accent-foreground">
                   <Icon className="size-5" />
                 </span>
                 <h3 className="font-display text-lg font-semibold">{f.title}</h3>
@@ -138,8 +138,8 @@ export function LandingPage() {
               </div>
             );
           })}
-          <div className="rounded-[20px] border border-border bg-card p-5 shadow-[var(--shadow-card)]">
-            <span className="mb-3 inline-flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
+          <div className="rounded-[10px] border border-border bg-card p-5 shadow-[var(--shadow-card)]">
+            <span className="mb-3 inline-flex size-10 items-center justify-center rounded-[3px] bg-accent text-accent-foreground">
               <CustomerIcon className="size-5" />
             </span>
             <h3 className="font-display text-lg font-semibold">
@@ -182,7 +182,7 @@ export function LandingPage() {
         </p>
         <Link
           href="/login"
-          className="mt-7 inline-flex h-12 items-center rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-8 text-base font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
+          className="mt-7 inline-flex h-12 items-center rounded-[7px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-8 text-base font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
         >
           Get Started
         </Link>

@@ -3,16 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import { listDrivers, createDriver, updateDriver } from "@/lib/services/drivers";
 import { queryKeys } from "@/lib/query-keys";
+import { useDebouncedValue } from "@/lib/use-debounced-value";
 import type { Driver, DriverStatusFilter } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import {
   PageHeader,
   EmptyState,
   ErrorState,
+  Refreshing,
   StatusBadge,
 } from "@/components/ui/states";
 import { Button } from "@/components/ui/button";
@@ -38,14 +40,16 @@ export function DriversPageClient() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search);
   const [status, setStatus] = useState<DriverStatusFilter>("all");
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Driver | null>(null);
 
   const query = useQuery({
-    queryKey: queryKeys.drivers.list(search, status),
-    queryFn: () => listDrivers(search || undefined, status),
+    queryKey: queryKeys.drivers.list(debouncedSearch, status),
+    queryFn: () => listDrivers(debouncedSearch || undefined, status),
     staleTime: 60_000,
+    placeholderData: keepPreviousData,
   });
 
   const openAssignments = useQuery({
@@ -93,7 +97,7 @@ export function DriversPageClient() {
       updateDriver(id, { is_active }),
     onMutate: async ({ id, is_active }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.drivers.all });
-      const key = queryKeys.drivers.list(search, status);
+      const key = queryKeys.drivers.list(debouncedSearch, status);
       const prev = queryClient.getQueryData<Driver[]>(key);
       queryClient.setQueryData<Driver[]>(key, (old) =>
         old?.map((d) => (d.id === id ? { ...d, is_active } : d))
@@ -120,7 +124,7 @@ export function DriversPageClient() {
           <div className="flex gap-2">
             <Link
               href="/dashboard/salary"
-              className="inline-flex h-11 items-center rounded-md border border-border bg-card px-4 text-sm font-medium hover:bg-muted"
+              className="inline-flex h-11 items-center rounded-[3px] border border-border bg-card px-4 text-sm font-medium hover:bg-muted"
             >
               Salaries
             </Link>
@@ -153,6 +157,8 @@ export function DriversPageClient() {
           <option value="inactive">Inactive</option>
         </Select>
       </div>
+
+      <Refreshing active={query.isFetching && !query.isLoading} />
 
       {query.isLoading && (
         <div className="space-y-3">
@@ -198,11 +204,11 @@ export function DriversPageClient() {
             {query.data.map((d) => (
               <article
                 key={d.id}
-                className="flex cursor-pointer items-center justify-between rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] p-4 hover:bg-muted/40"
+                className="flex cursor-pointer items-center justify-between rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] p-4 hover:bg-muted/40"
                 onClick={() => router.push(`/dashboard/drivers/${d.id}`)}
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent font-display text-sm font-semibold text-accent-foreground">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-[11px] bg-accent font-display text-sm font-semibold text-accent-foreground">
                     {initials(d.name)}
                   </span>
                   <div className="min-w-0">
@@ -254,7 +260,7 @@ export function DriversPageClient() {
             ))}
           </div>
 
-          <div className="hidden overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
+          <div className="hidden overflow-hidden rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border bg-muted/50 text-muted-foreground">
                 <tr>
@@ -274,7 +280,7 @@ export function DriversPageClient() {
                   >
                     <td className="px-4 py-3 font-medium">
                       <div className="flex items-center gap-3">
-                        <span className="flex size-9 items-center justify-center rounded-full bg-accent font-display text-xs font-semibold text-accent-foreground">
+                        <span className="flex size-9 items-center justify-center rounded-[9px] bg-accent font-display text-xs font-semibold text-accent-foreground">
                           {initials(d.name)}
                         </span>
                         <div>

@@ -56,8 +56,8 @@ export function Dialog({
         className={cn(
           "dialog-panel relative z-10 flex w-full max-h-[92vh] flex-col overflow-hidden border border-border bg-card shadow-[var(--shadow-floating)]",
           fullScreenMobile
-            ? "h-full max-h-full rounded-none sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-[24px]"
-            : "max-w-lg rounded-t-[24px] sm:rounded-[24px]",
+            ? "h-full max-h-full rounded-none sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-[12px]"
+            : "max-w-lg rounded-t-[12px] sm:rounded-[12px]",
           className
         )}
       >

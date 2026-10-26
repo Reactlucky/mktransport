@@ -263,6 +263,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   animation: menu-drawer-out 220ms ease-in both;
 }
 
+@keyframes nav-progress {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(420%);
+  }
+}
+
+.nav-progress {
+  animation: nav-progress 1s ease-in-out infinite;
+}
+
 @keyframes wheel-spin {
   to {
     transform: rotate(360deg);

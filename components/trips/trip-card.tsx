@@ -14,7 +14,7 @@ export function TripCard({
   const customer = trip.customers?.name ?? "—";
 
   return (
-    <article className="rounded-[20px] border border-border bg-card p-4 shadow-[var(--shadow-card)]">
+    <article className="rounded-[10px] border border-border bg-card p-4 shadow-[var(--shadow-card)]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <Link
@@ -50,7 +50,7 @@ export function TripCard({
         <div className="flex gap-1">
           <Link
             href={`/dashboard/trips/${trip.id}/edit`}
-            className="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="inline-flex size-9 items-center justify-center rounded-[9px] text-muted-foreground hover:bg-muted hover:text-foreground"
             aria-label="Edit trip"
           >
             <Pencil className="size-4" />
@@ -59,7 +59,7 @@ export function TripCard({
             <button
               type="button"
               onClick={onDelete}
-              className="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-danger-muted hover:text-danger"
+              className="inline-flex size-9 items-center justify-center rounded-[9px] text-muted-foreground hover:bg-danger-muted hover:text-danger"
               aria-label="Delete trip"
             >
               <Trash2 className="size-4" />

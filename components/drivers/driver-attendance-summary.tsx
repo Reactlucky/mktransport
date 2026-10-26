@@ -4,8 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { listAttendanceForMonth } from "@/lib/services/attendance";
-import { summarizeAttendance } from "@/lib/calculations/attendance";
+import { attendanceMonthDays, summarizeAttendance } from "@/lib/calculations/attendance";
+import { AttendanceCalendar } from "@/components/charts/driver-charts";
 import { queryKeys } from "@/lib/query-keys";
+import { toInputDate } from "@/lib/utils";
 import { ErrorState } from "@/components/ui/states";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -58,12 +60,14 @@ export function DriverAttendanceSummary({ driverId }: { driverId: string }) {
         />
       )}
       {query.isSuccess && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <SummaryCell label="Present days" value={formatDays(summary.presentDays)} />
-          <SummaryCell label="Absent" value={String(summary.absent)} />
-          <SummaryCell label="Leave" value={String(summary.leave)} />
-          <SummaryCell label="Half days" value={String(summary.halfDay)} />
-        </div>
+        <AttendanceCalendar
+          days={attendanceMonthDays(query.data ?? [], year, month)}
+          today={toInputDate()}
+          presentDays={summary.presentDays}
+          absent={summary.absent}
+          leave={summary.leave}
+          halfDay={summary.halfDay}
+        />
       )}
       <p className="mt-2 text-xs text-muted-foreground">
         A half day counts as half a present day.{" "}
@@ -73,17 +77,4 @@ export function DriverAttendanceSummary({ driverId }: { driverId: string }) {
       </p>
     </section>
   );
-}
-
-function SummaryCell({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] px-3 py-3">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-lg font-semibold tabular-nums">{value}</p>
-    </div>
-  );
-}
-
-function formatDays(value: number) {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
 }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import {
   listTrucks,
@@ -12,8 +12,9 @@ import {
   toggleTruckActive,
 } from "@/lib/services/trucks";
 import { queryKeys } from "@/lib/query-keys";
+import { useDebouncedValue } from "@/lib/use-debounced-value";
 import type { Truck, TruckStatus } from "@/lib/types";
-import { PageHeader, EmptyState, ErrorState, StatusBadge } from "@/components/ui/states";
+import { PageHeader, EmptyState, ErrorState, Refreshing, StatusBadge } from "@/components/ui/states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -41,13 +42,15 @@ export function TrucksPageClient() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Truck | null>(null);
 
   const query = useQuery({
-    queryKey: queryKeys.trucks.list(search),
-    queryFn: () => listTrucks(search || undefined),
+    queryKey: queryKeys.trucks.list(debouncedSearch),
+    queryFn: () => listTrucks(debouncedSearch || undefined),
     staleTime: 60_000,
+    placeholderData: keepPreviousData,
   });
 
   const openAssignments = useQuery({
@@ -89,7 +92,7 @@ export function TrucksPageClient() {
       toggleTruckActive(id, is_active),
     onMutate: async ({ id, is_active }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.trucks.all });
-      const key = queryKeys.trucks.list(search);
+      const key = queryKeys.trucks.list(debouncedSearch);
       const prev = queryClient.getQueryData<Truck[]>(key);
       queryClient.setQueryData<Truck[]>(key, (old) =>
         old?.map((t) => (t.id === id ? { ...t, is_active } : t))
@@ -111,7 +114,7 @@ export function TrucksPageClient() {
       updateTruck(id, { status }),
     onMutate: async ({ id, status }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.trucks.all });
-      const key = queryKeys.trucks.list(search);
+      const key = queryKeys.trucks.list(debouncedSearch);
       const prev = queryClient.getQueryData<Truck[]>(key);
       queryClient.setQueryData<Truck[]>(key, (old) =>
         old?.map((t) => (t.id === id ? { ...t, status } : t))
@@ -151,6 +154,8 @@ export function TrucksPageClient() {
         />
       </div>
 
+      <Refreshing active={query.isFetching && !query.isLoading} />
+
       {query.isLoading && (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -189,7 +194,7 @@ export function TrucksPageClient() {
             {query.data.map((truck) => (
               <article
                 key={truck.id}
-                className="cursor-pointer rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] p-4 hover:bg-muted/40"
+                className="cursor-pointer rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] p-4 hover:bg-muted/40"
                 onClick={() => router.push(`/dashboard/trucks/${truck.id}`)}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -244,7 +249,7 @@ export function TrucksPageClient() {
             ))}
           </div>
 
-          <div className="hidden overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
+          <div className="hidden overflow-hidden rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border bg-muted/50 text-muted-foreground">
                 <tr>
@@ -282,7 +287,7 @@ export function TrucksPageClient() {
                     <td className="px-4 py-3">
                       <span
                         className={cn(
-                          "inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium",
+                          "inline-flex rounded-[6px] px-2.5 py-0.5 text-xs font-medium",
                           statusClass[truck.status]
                         )}
                       >

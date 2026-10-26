@@ -19,7 +19,7 @@ export function MobileBottomNav({ onMore }: { onMore: () => void }) {
 
   return (
     <nav
-      className="fixed inset-x-3 bottom-3 z-40 rounded-[28px] border border-border bg-sidebar pb-[env(safe-area-inset-bottom)] shadow-[var(--shadow-floating)] backdrop-blur-xl lg:hidden"
+      className="fixed inset-x-3 bottom-3 z-40 rounded-[14px] border border-border bg-sidebar pb-[env(safe-area-inset-bottom)] shadow-[var(--shadow-floating)] backdrop-blur-xl lg:hidden"
       aria-label="Mobile primary"
     >
       <ul className="grid grid-cols-5 items-end">
@@ -49,7 +49,7 @@ export function MobileBottomNav({ onMore }: { onMore: () => void }) {
               <li key={item.label} className="relative flex justify-center">
                 <Link
                   href={item.href}
-                  className="-mt-5 flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-[#2563eb] to-[#60a5fa] text-white shadow-[0_10px_24px_rgba(37,99,235,0.35)] transition duration-200 active:scale-95"
+                  className="-mt-5 flex size-14 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] text-white shadow-[0_10px_24px_rgba(37,99,235,0.35)] transition duration-200 active:scale-95"
                   aria-label="Add Trip"
                 >
                   <Plus className="size-7" strokeWidth={2.25} />

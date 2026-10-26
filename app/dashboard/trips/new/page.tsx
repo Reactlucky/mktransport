@@ -33,6 +33,9 @@ export default function NewTripPage() {
                 queryClient.invalidateQueries({
                   queryKey: queryKeys.dashboard.all,
                 }),
+                queryClient.invalidateQueries({
+                  queryKey: queryKeys.reports.all,
+                }),
               ]);
               toast("Trip added successfully", "success");
               router.push("/dashboard/trips");

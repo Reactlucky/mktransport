@@ -1,52 +1,75 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import {
-  getMonthlyTripSummary,
-  getTruckStatusSummary,
-} from "@/lib/services/dashboard";
-import { getRecentTrips, getTodayTrips } from "@/lib/services/trips";
+import { getMonthlyTripSummary } from "@/lib/services/dashboard";
+import { getRecentTrips, getTodayTrips, listTripRentsForMonth } from "@/lib/services/trips";
 import { listTrucks } from "@/lib/services/trucks";
 import { queryKeys } from "@/lib/query-keys";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, toInputDate } from "@/lib/utils";
+import { dailyRentTotals } from "@/lib/calculations/charts";
+import { summarizeActiveTrucks } from "@/lib/calculations/fleet";
 import { reminderLabel, upcomingPaperReminders } from "@/lib/calculations/papers";
-import { EmptyState, ErrorState } from "@/components/ui/states";
+import { EmptyState, ErrorState, Refreshing } from "@/components/ui/states";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DailyRentChart } from "@/components/charts/amount-charts";
 import { TripCard } from "@/components/trips/trip-card";
 
-export function DashboardPageClient() {
-  const [clock, setClock] = useState<{ year: number; month: number; greeting: string; dateLabel: string } | null>(null);
+type DashboardClock = {
+  year: number;
+  month: number;
+  greeting: string;
+  dateLabel: string;
+};
 
-  useEffect(() => {
-    const now = new Date();
-    const hour = now.getHours();
-    setClock({
-      year: now.getFullYear(),
-      month: now.getMonth() + 1,
-      greeting: hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening",
-      dateLabel: now.toLocaleDateString("en-IN", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-      }),
-    });
-  }, []);
+let cachedClock: DashboardClock | null = null;
+
+function readClock(): DashboardClock {
+  if (cachedClock) return cachedClock;
+  const now = new Date();
+  const hour = now.getHours();
+  cachedClock = {
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    greeting:
+      hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening",
+    dateLabel: now.toLocaleDateString("en-IN", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    }),
+  };
+  return cachedClock;
+}
+
+export function DashboardPageClient() {
+  const clock = useSyncExternalStore(
+    () => () => {},
+    readClock,
+    () => null
+  );
 
   const year = clock?.year ?? 0;
   const month = clock?.month ?? 0;
 
-  const truckSummary = useQuery({
-    queryKey: queryKeys.dashboard.truckSummary,
-    queryFn: getTruckStatusSummary,
-    staleTime: 30_000,
+  const trucksQuery = useQuery({
+    queryKey: queryKeys.trucks.list(""),
+    queryFn: () => listTrucks(),
+    staleTime: 60_000,
   });
 
   const monthly = useQuery({
-    queryKey: queryKeys.dashboard.monthly,
+    queryKey: queryKeys.dashboard.monthly(year, month),
     queryFn: () => getMonthlyTripSummary(year, month),
+    enabled: clock != null,
+    staleTime: 30_000,
+  });
+
+  const dailyRents = useQuery({
+    queryKey: queryKeys.dashboard.daily(year, month),
+    queryFn: () => listTripRentsForMonth(year, month),
     enabled: clock != null,
     staleTime: 30_000,
   });
@@ -63,17 +86,15 @@ export function DashboardPageClient() {
     staleTime: 15_000,
   });
 
-  const reminders = useQuery({
-    queryKey: queryKeys.dashboard.reminders,
-    queryFn: () => listTrucks(),
-    staleTime: 30_000,
-  });
-  const dueReminders = reminders.data ? upcomingPaperReminders(reminders.data) : [];
+  const fleet = trucksQuery.data
+    ? summarizeActiveTrucks(trucksQuery.data)
+    : undefined;
+  const dueReminders = trucksQuery.data
+    ? upcomingPaperReminders(trucksQuery.data)
+    : [];
 
   const greeting = clock?.greeting ?? "Today";
   const dateLabel = clock?.dateLabel ?? "";
-
-  const fleet = truckSummary.data;
 
   const kpis = [
     { label: "Fleet", value: fleet?.total ?? 0, tone: "bg-[#0B1F3A] text-white" },
@@ -84,7 +105,7 @@ export function DashboardPageClient() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
-      <section className="relative overflow-hidden rounded-[28px] border border-border bg-card p-6 shadow-[var(--shadow-card)] md:p-8">
+      <section className="relative overflow-hidden rounded-[14px] border border-border bg-card p-6 shadow-[var(--shadow-card)] md:p-8">
         <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm text-muted-foreground">{dateLabel}</p>
@@ -99,7 +120,7 @@ export function DashboardPageClient() {
           </div>
           <Link
             href="/dashboard/trips/new"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-[14px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-5 text-sm font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-[7px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-5 text-sm font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
           >
             <Plus className="size-4" />
             Add Trip
@@ -123,43 +144,84 @@ export function DashboardPageClient() {
       </section>
 
       <section aria-label="Fleet and month">
-        {truckSummary.isLoading && (
+        <Refreshing active={trucksQuery.isFetching && !trucksQuery.isLoading} />
+        {trucksQuery.isLoading && (
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <Skeleton key={i} className="h-28" />
             ))}
           </div>
         )}
-        {truckSummary.isError && (
+        {trucksQuery.isError && (
           <ErrorState
             message="Unable to load truck summary."
-            onRetry={() => truckSummary.refetch()}
+            onRetry={() => trucksQuery.refetch()}
           />
         )}
-        {truckSummary.isSuccess && (
+        {trucksQuery.isSuccess && (
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
             {kpis.map((stat) => (
               <div
                 key={stat.label}
-                className={`rounded-[20px] p-4 shadow-[var(--shadow-soft)] ${stat.tone}`}
+                className={`rounded-[10px] p-4 shadow-[var(--shadow-soft)] ${stat.tone}`}
               >
                 <p className="text-xs font-medium opacity-80">{stat.label}</p>
                 <p className="mt-2 font-display text-3xl font-semibold tabular">{stat.value}</p>
               </div>
             ))}
-            <div className="rounded-[20px] border border-border bg-card p-4 shadow-[var(--shadow-card)]">
+            <div className="rounded-[10px] border border-border bg-card p-4 shadow-[var(--shadow-card)]">
               <p className="text-xs font-medium text-muted-foreground">Trips this month</p>
-              <p className="mt-2 font-display text-3xl font-semibold tabular">
-                {monthly.data?.trip_count ?? "—"}
-              </p>
+              {monthly.isLoading ? (
+                <Skeleton className="mt-2 h-9 w-16" />
+              ) : monthly.isError ? (
+                <button
+                  type="button"
+                  className="mt-2 text-sm font-medium text-danger"
+                  onClick={() => monthly.refetch()}
+                >
+                  Retry
+                </button>
+              ) : (
+                <p className="mt-2 font-display text-3xl font-semibold tabular">
+                  {monthly.data?.trip_count ?? "—"}
+                </p>
+              )}
             </div>
-            <div className="rounded-[20px] border border-border bg-card p-4 shadow-[var(--shadow-card)]">
+            <div className="rounded-[10px] border border-border bg-card p-4 shadow-[var(--shadow-card)]">
               <p className="text-xs font-medium text-muted-foreground">Rent this month</p>
-              <p className="mt-2 font-display text-2xl font-semibold tabular text-primary">
-                {monthly.data ? formatCurrency(monthly.data.total_rent) : "—"}
-              </p>
+              {monthly.isLoading ? (
+                <Skeleton className="mt-2 h-8 w-24" />
+              ) : monthly.isError ? (
+                <button
+                  type="button"
+                  className="mt-2 text-sm font-medium text-danger"
+                  onClick={() => monthly.refetch()}
+                >
+                  Retry
+                </button>
+              ) : (
+                <p className="mt-2 font-display text-2xl font-semibold tabular text-primary">
+                  {monthly.data ? formatCurrency(monthly.data.total_rent) : "—"}
+                </p>
+              )}
             </div>
           </div>
+        )}
+      </section>
+
+      <section aria-label="Daily rent">
+        {dailyRents.isLoading && <Skeleton className="h-48" />}
+        {dailyRents.isError && (
+          <ErrorState
+            message="Unable to load daily rent."
+            onRetry={() => dailyRents.refetch()}
+          />
+        )}
+        {dailyRents.isSuccess && clock && (
+          <DailyRentChart
+            days={dailyRentTotals(dailyRents.data, clock.year, clock.month)}
+            today={toInputDate()}
+          />
         )}
       </section>
 
@@ -173,7 +235,7 @@ export function DashboardPageClient() {
           <Link
             key={action.href}
             href={action.href}
-            className="rounded-[20px] border border-border bg-card px-4 py-4 text-sm font-medium shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5"
+            className="rounded-[10px] border border-border bg-card px-4 py-4 text-sm font-medium shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5"
           >
             {action.label}
           </Link>
@@ -181,55 +243,69 @@ export function DashboardPageClient() {
       </section>
 
       <section aria-labelledby="reminders-heading">
-        <h2 id="reminders-heading" className="mb-3 font-display text-lg font-semibold">
-          Coming up
+        <h2 id="reminders-heading" className="font-display text-lg font-semibold">
+          Reminders
         </h2>
-        {reminders.isLoading && <Skeleton className="h-24" />}
-        {reminders.isError && (
-          <ErrorState
-            message="Unable to load EMI, fitness, and insurance dates."
-            onRetry={() => reminders.refetch()}
-          />
-        )}
-        {reminders.isSuccess && dueReminders.length === 0 && (
+        <p className="mb-3 mt-1 text-sm text-muted-foreground">
+          Fitness, insurance, and EMI dates that need attention.
+        </p>
+        {trucksQuery.isLoading && <Skeleton className="h-24" />}
+        {trucksQuery.isSuccess && dueReminders.length === 0 && (
           <EmptyState
             title="Nothing due soon"
             description="EMI, fitness, and insurance dates in the next 30 days show up here."
           />
         )}
-        {reminders.isSuccess && dueReminders.length > 0 && (
-          <ul className="space-y-2">
-            {dueReminders.map((item) => (
-              <li key={`${item.truckId}-${item.kind}`}>
-                <Link
-                  href={`/dashboard/trucks/${item.truckId}`}
-                  className="flex items-center justify-between gap-3 rounded-[20px] border border-border bg-card px-4 py-3 shadow-[var(--shadow-soft)]"
-                >
-                  <span>
-                    <span className="block text-sm font-medium">
-                      {item.registration}
-                    </span>
-                    <span className="block text-xs text-muted-foreground">
-                      {item.kind === "emi"
-                        ? "EMI"
-                        : item.kind === "fitness"
-                          ? "Fitness"
-                          : "Insurance"}{" "}
-                      · {formatDate(item.date)}
-                    </span>
-                  </span>
-                  <span
+        {trucksQuery.isSuccess && dueReminders.length > 0 && (
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {dueReminders.map((item) => {
+              const overdue = item.daysUntil <= 0;
+              const kind =
+                item.kind === "emi"
+                  ? "EMI"
+                  : item.kind === "fitness"
+                    ? "Fitness"
+                    : "Insurance";
+              return (
+                <li key={`${item.truckId}-${item.kind}`}>
+                  <Link
+                    href={`/dashboard/trucks/${item.truckId}`}
                     className={
-                      item.daysUntil < 0
-                        ? "text-sm font-medium text-danger"
-                        : "text-sm font-medium text-warning"
+                      overdue
+                        ? "flex h-full items-center justify-between gap-3 rounded-[10px] border border-danger/20 bg-[color-mix(in_srgb,var(--danger)_10%,white)] px-4 py-3.5 dark:bg-[color-mix(in_srgb,var(--danger)_16%,transparent)]"
+                        : "flex h-full items-center justify-between gap-3 rounded-[10px] border border-warning/25 bg-[color-mix(in_srgb,var(--warning)_12%,white)] px-4 py-3.5 dark:bg-[color-mix(in_srgb,var(--warning)_18%,transparent)]"
                     }
                   >
-                    {reminderLabel(item.daysUntil)}
-                  </span>
-                </Link>
-              </li>
-            ))}
+                    <span className="min-w-0">
+                      <span
+                        className={
+                          overdue
+                            ? "inline-flex rounded-[6px] bg-white/80 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-danger"
+                            : "inline-flex rounded-[6px] bg-white/80 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-warning"
+                        }
+                      >
+                        {kind}
+                      </span>
+                      <span className="mt-1.5 block truncate text-sm font-semibold text-navy">
+                        {item.registration}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        {formatDate(item.date)}
+                      </span>
+                    </span>
+                    <span
+                      className={
+                        overdue
+                          ? "shrink-0 text-right text-sm font-semibold text-danger"
+                          : "shrink-0 text-right text-sm font-semibold text-warning"
+                      }
+                    >
+                      {reminderLabel(item.daysUntil)}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
@@ -275,6 +351,12 @@ export function DashboardPageClient() {
           Recent trips
         </h2>
         {recentTrips.isLoading && <Skeleton className="h-40" />}
+        {recentTrips.isError && (
+          <ErrorState
+            message="Unable to load recent trips."
+            onRetry={() => recentTrips.refetch()}
+          />
+        )}
         {recentTrips.isSuccess && recentTrips.data.length > 0 && (
           <div className="space-y-3">
             {recentTrips.data.map((trip) => (

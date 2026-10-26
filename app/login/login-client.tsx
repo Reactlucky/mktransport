@@ -60,9 +60,9 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       <main className="flex flex-1 flex-col items-center justify-center px-5 py-10">
-        <Link href="/" className="mb-8 flex flex-col items-center text-center">
-          <BrandMark className="size-14" />
-          <span className="mt-4 font-display text-4xl font-semibold tracking-tight text-navy sm:text-5xl">
+        <Link href="/" className="mb-8 flex w-full max-w-sm flex-col items-center px-2 text-center">
+          <BrandMark className="h-24 w-44 rounded-[14px] p-3" />
+          <span className="mt-4 max-w-full text-balance font-display text-3xl font-semibold tracking-tight text-navy sm:text-4xl">
             MK TRANSPORT
           </span>
           <span className="mt-2 max-w-xs text-sm text-muted-foreground">
@@ -70,7 +70,7 @@ export default function LoginPage() {
           </span>
         </Link>
 
-        <div className="w-full max-w-md rounded-[28px] border border-border bg-card p-6 shadow-[var(--shadow-floating)] md:p-8">
+        <div className="w-full max-w-md rounded-[14px] border border-border bg-card p-6 shadow-[var(--shadow-floating)] md:p-8">
           <h1 className="font-display text-2xl font-semibold tracking-tight">
             Sign in
           </h1>
@@ -110,7 +110,7 @@ export default function LoginPage() {
 
             {formError && (
               <div
-                className="rounded-md border border-danger/30 bg-danger-muted px-3 py-2 text-sm text-danger"
+                className="rounded-[3px] border border-danger/30 bg-danger-muted px-3 py-2 text-sm text-danger"
                 role="alert"
               >
                 {formError}

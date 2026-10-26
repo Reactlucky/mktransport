@@ -105,7 +105,7 @@ export function CommandSearch({
         role="dialog"
         aria-modal="true"
         aria-label="Search records"
-        className="dialog-panel relative z-10 w-full max-w-xl overflow-hidden rounded-[24px] border border-border bg-card shadow-[var(--shadow-floating)]"
+        className="dialog-panel relative z-10 w-full max-w-xl overflow-hidden rounded-[12px] border border-border bg-card shadow-[var(--shadow-floating)]"
       >
         <div className="flex items-center gap-3 border-b border-border px-4">
           <Search className="size-4 text-muted-foreground" />
@@ -136,7 +136,7 @@ export function CommandSearch({
             <li key={`${result.group}-${result.href}`}>
               <button
                 type="button"
-                className="flex w-full items-center justify-between gap-3 rounded-[14px] px-3 py-2.5 text-left hover:bg-muted"
+                className="flex w-full items-center justify-between gap-3 rounded-[7px] px-3 py-2.5 text-left hover:bg-muted"
                 onClick={() => {
                   router.push(result.href);
                   onClose();

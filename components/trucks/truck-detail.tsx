@@ -123,7 +123,7 @@ export function TruckDetailPage({ id }: { id: string }) {
             <p className="mt-1">
               <span
                 className={cn(
-                  "inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium",
+                  "inline-flex rounded-[6px] px-2.5 py-0.5 text-xs font-medium",
                   statusClass[truck.status]
                 )}
               >

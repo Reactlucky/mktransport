@@ -21,3 +21,28 @@ export function summarizeAttendance(rows: { status: AttendanceStatus }[]) {
     presentDays: present + halfDay / 2,
   };
 }
+
+export function attendanceMonthDays(
+  rows: { attendance_date: string; status: AttendanceStatus }[],
+  year: number,
+  month: number
+) {
+  const count = new Date(year, month, 0).getDate();
+  const prefix = `${year}-${String(month).padStart(2, "0")}-`;
+  const byDay = new Map<number, AttendanceStatus>();
+
+  for (const row of rows) {
+    if (!row.attendance_date.startsWith(prefix)) continue;
+    const day = Number(row.attendance_date.slice(8, 10));
+    if (day >= 1 && day <= count) byDay.set(day, row.status);
+  }
+
+  return Array.from({ length: count }, (_, index) => {
+    const day = index + 1;
+    return {
+      day,
+      date: `${prefix}${String(day).padStart(2, "0")}`,
+      status: byDay.get(day) ?? null,
+    };
+  });
+}

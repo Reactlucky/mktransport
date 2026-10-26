@@ -59,7 +59,7 @@ export function Sidebar({
       className={cn(
         "flex h-full flex-col text-sidebar-foreground",
         floating
-          ? "rounded-[28px] border border-border bg-sidebar shadow-[var(--shadow-floating)] backdrop-blur-xl"
+          ? "rounded-[14px] border border-border bg-sidebar shadow-[var(--shadow-floating)] backdrop-blur-xl"
           : "bg-sidebar backdrop-blur-xl",
         "transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
         collapsed ? "w-[76px]" : "w-[248px]"
@@ -95,7 +95,7 @@ export function Sidebar({
                     href={item.href}
                     onClick={onNavigate}
                     className={cn(
-                      "flex items-center gap-3 rounded-full px-3 py-2.5 text-sm font-medium transition duration-200",
+                      "flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm font-medium transition duration-200",
                       collapsed && "justify-center px-2",
                       active
                         ? "bg-sidebar-active text-accent-foreground"

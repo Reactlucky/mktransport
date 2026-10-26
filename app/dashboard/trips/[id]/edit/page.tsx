@@ -55,6 +55,9 @@ export default function EditTripPage({
                 queryClient.invalidateQueries({
                   queryKey: queryKeys.dashboard.all,
                 }),
+                queryClient.invalidateQueries({
+                  queryKey: queryKeys.reports.all,
+                }),
               ]);
               toast("Trip updated successfully", "success");
               router.push("/dashboard/trips");

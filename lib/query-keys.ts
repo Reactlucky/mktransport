@@ -38,7 +38,10 @@ export const queryKeys = {
   dashboard: {
     all: ["dashboard"] as const,
     truckSummary: ["dashboard", "truckSummary"] as const,
-    monthly: ["dashboard", "monthly"] as const,
+    monthly: (year: number, month: number) =>
+      ["dashboard", "monthly", year, month] as const,
+    daily: (year: number, month: number) =>
+      ["dashboard", "daily", year, month] as const,
     reminders: ["dashboard", "reminders"] as const,
   },
   attendance: {
@@ -49,6 +52,7 @@ export const queryKeys = {
       ["salary", "month", year, month] as const,
   },
   reports: {
+    all: ["reports"] as const,
     monthly: (year: number, month: number) =>
       ["reports", "monthly", year, month] as const,
     truckWise: (year: number, month: number) =>

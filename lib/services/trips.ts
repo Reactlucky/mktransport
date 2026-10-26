@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { PaginatedResult, Trip, TripFilters } from "@/lib/types";
 import type { TripInput } from "@/lib/validations";
+import { monthDateRange } from "@/lib/calculations/charts";
 import { getUserFacingError, toInputDate } from "@/lib/utils";
 import { normalizeTrip, normalizeTrips } from "@/lib/services/normalize";
 
@@ -66,6 +67,29 @@ export async function listTrips(
     page,
     pageSize,
   };
+}
+
+export async function listTripRentsForMonth(
+  year: number,
+  month: number
+): Promise<{ trip_date: string; rent: number }[]> {
+  const supabase = createClient();
+  const { start, end } = monthDateRange(year, month);
+  const { data, error } = await supabase
+    .from("trips")
+    .select("trip_date, rent")
+    .gte("trip_date", start)
+    .lte("trip_date", end)
+    .limit(2000);
+
+  if (error) {
+    throw new Error(getUserFacingError(error, "Unable to load daily rent."));
+  }
+
+  return (data ?? []).map((row) => ({
+    trip_date: row.trip_date,
+    rent: Number(row.rent),
+  }));
 }
 
 export async function getTodayTrips(): Promise<Trip[]> {

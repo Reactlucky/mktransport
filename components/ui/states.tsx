@@ -14,7 +14,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
-      <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-muted">
+      <div className="mb-3 flex size-12 items-center justify-center rounded-[12px] bg-muted">
         <Inbox className="size-6 text-muted-foreground" />
       </div>
       <h3 className="text-base font-semibold">{title}</h3>
@@ -37,7 +37,7 @@ export function ErrorState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
-      <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-danger-muted">
+      <div className="mb-3 flex size-12 items-center justify-center rounded-[12px] bg-danger-muted">
         <AlertCircle className="size-6 text-danger" />
       </div>
       <h3 className="text-base font-semibold">Something went wrong</h3>
@@ -48,6 +48,25 @@ export function ErrorState({
         </Button>
       )}
     </div>
+  );
+}
+
+export function Refreshing({
+  active,
+  label = "Updating…",
+}: {
+  active: boolean;
+  label?: string;
+}) {
+  if (!active) return null;
+  return (
+    <p
+      className="mb-3 flex items-center gap-2 text-sm text-muted-foreground"
+      role="status"
+    >
+      <span className="size-4 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-primary" />
+      {label}
+    </p>
   );
 }
 
@@ -99,7 +118,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold",
+        "inline-flex items-center rounded-[6px] px-2.5 py-1 text-xs font-semibold",
         active
           ? "bg-success-muted text-success"
           : "bg-muted text-muted-foreground"

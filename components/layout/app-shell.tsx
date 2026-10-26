@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Menu, Moon, Search, Settings, Sun, X } from "lucide-react";
 import { Sidebar } from "./sidebar";
+import { NavigationProgress } from "./navigation-progress";
 import { MobileBottomNav } from "./mobile-nav";
 import { CommandSearch } from "./command-search";
 import { Button } from "@/components/ui/button";
@@ -73,6 +74,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-dvh">
+      <NavigationProgress />
       <div className="sticky top-0 hidden h-dvh shrink-0 p-3 lg:block">
         <Sidebar collapsed={collapsed} floating />
       </div>
@@ -127,11 +129,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="hidden h-10 items-center gap-2 rounded-full border border-border bg-card/70 px-3 text-sm text-muted-foreground shadow-[var(--shadow-soft)] sm:inline-flex"
+            className="hidden h-10 items-center gap-2 rounded-[10px] border border-border bg-card/70 px-3 text-sm text-muted-foreground shadow-[var(--shadow-soft)] sm:inline-flex"
           >
             <Search className="size-4" />
             Search
-            <kbd className="rounded-md bg-muted px-1.5 py-0.5 text-[11px]">⌘K</kbd>
+            <kbd className="rounded-[3px] bg-muted px-1.5 py-0.5 text-[11px]">⌘K</kbd>
           </button>
           <Button
             type="button"
@@ -161,7 +163,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Button>
           <Link
             href="/dashboard/settings"
-            className="inline-flex size-11 items-center justify-center rounded-[14px] text-foreground hover:bg-muted"
+            className="inline-flex size-11 items-center justify-center rounded-[7px] text-foreground hover:bg-muted"
             aria-label="Settings"
           >
             <Settings className="size-5" />

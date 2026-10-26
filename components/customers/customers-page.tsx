@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import {
   listCustomers,
@@ -11,11 +11,13 @@ import {
   updateCustomer,
 } from "@/lib/services/customers";
 import { queryKeys } from "@/lib/query-keys";
+import { useDebouncedValue } from "@/lib/use-debounced-value";
 import type { Customer } from "@/lib/types";
 import {
   PageHeader,
   EmptyState,
   ErrorState,
+  Refreshing,
   StatusBadge,
 } from "@/components/ui/states";
 import { Button } from "@/components/ui/button";
@@ -30,13 +32,15 @@ export function CustomersPageClient() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Customer | null>(null);
 
   const query = useQuery({
-    queryKey: queryKeys.customers.list(search),
-    queryFn: () => listCustomers(search || undefined),
+    queryKey: queryKeys.customers.list(debouncedSearch),
+    queryFn: () => listCustomers(debouncedSearch || undefined),
     staleTime: 60_000,
+    placeholderData: keepPreviousData,
   });
 
   const createMutation = useMutation({
@@ -92,6 +96,8 @@ export function CustomersPageClient() {
         />
       </div>
 
+      <Refreshing active={query.isFetching && !query.isLoading} />
+
       {query.isLoading && (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -130,7 +136,7 @@ export function CustomersPageClient() {
             {query.data.map((c) => (
               <article
                 key={c.id}
-                className="cursor-pointer rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] p-4 hover:bg-muted/40"
+                className="cursor-pointer rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] p-4 hover:bg-muted/40"
                 onClick={() => router.push(`/dashboard/customers/${c.id}`)}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -171,7 +177,7 @@ export function CustomersPageClient() {
             ))}
           </div>
 
-          <div className="hidden overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
+          <div className="hidden overflow-hidden rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border bg-muted/50 text-muted-foreground">
                 <tr>

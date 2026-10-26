@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { Plus, Search, Filter } from "lucide-react";
 import { listTrips, deleteTrip } from "@/lib/services/trips";
@@ -9,7 +9,7 @@ import { listActiveTrucks } from "@/lib/services/trucks";
 import { listActiveCustomers } from "@/lib/services/customers";
 import { queryKeys } from "@/lib/query-keys";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { PageHeader, EmptyState, ErrorState } from "@/components/ui/states";
+import { PageHeader, EmptyState, ErrorState, Refreshing } from "@/components/ui/states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -57,6 +57,7 @@ export function TripsPageClient() {
     queryKey: queryKeys.trips.list(filters),
     queryFn: () => listTrips(filters),
     staleTime: 15_000,
+    placeholderData: keepPreviousData,
   });
 
   const trucksQuery = useQuery({
@@ -79,6 +80,7 @@ export function TripsPageClient() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.trips.all }),
         queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.reports.all }),
       ]);
     },
     onError: (err: Error) => toast(err.message, "error"),
@@ -174,7 +176,7 @@ export function TripsPageClient() {
         action={
           <Link
             href="/dashboard/trips/new"
-            className="inline-flex h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary-hover"
+            className="inline-flex h-11 items-center gap-2 rounded-[3px] bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary-hover"
           >
             <Plus className="size-4" />
             Add Trip
@@ -206,7 +208,7 @@ export function TripsPageClient() {
         </Button>
       </div>
 
-      <div className="mb-4 hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] p-4 lg:block">
+      <div className="mb-4 hidden rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] p-4 lg:block">
         {filterFields}
         {filterSummary && (
           <Button
@@ -220,6 +222,8 @@ export function TripsPageClient() {
           </Button>
         )}
       </div>
+
+      <Refreshing active={tripsQuery.isFetching && !tripsQuery.isLoading} />
 
       {tripsQuery.isLoading && (
         <div className="space-y-3">
@@ -247,7 +251,7 @@ export function TripsPageClient() {
           action={
             <Link
               href="/dashboard/trips/new"
-              className="inline-flex h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
+              className="inline-flex h-11 items-center gap-2 rounded-[3px] bg-primary px-4 text-sm font-medium text-primary-foreground"
             >
               <Plus className="size-4" />
               Add Trip
@@ -270,7 +274,7 @@ export function TripsPageClient() {
           </div>
 
           {/* Desktop table */}
-          <div className="hidden overflow-hidden rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
+          <div className="hidden overflow-hidden rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead className="border-b border-border bg-muted/50 text-muted-foreground">
@@ -318,13 +322,13 @@ export function TripsPageClient() {
                         <div className="flex justify-end gap-1">
                           <Link
                             href={`/dashboard/trips/${trip.id}/edit`}
-                            className="rounded-md px-2 py-1.5 text-xs font-medium text-primary hover:bg-accent"
+                            className="rounded-[3px] px-2 py-1.5 text-xs font-medium text-primary hover:bg-accent"
                           >
                             Edit
                           </Link>
                           <button
                             type="button"
-                            className="rounded-md px-2 py-1.5 text-xs font-medium text-danger hover:bg-danger-muted"
+                            className="rounded-[3px] px-2 py-1.5 text-xs font-medium text-danger hover:bg-danger-muted"
                             onClick={() => setDeleteId(trip.id)}
                           >
                             Delete

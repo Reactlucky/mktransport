@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog } from "@/components/ui/dialog";
+import { SalaryPieChart } from "@/components/charts/driver-charts";
 import { ErrorState } from "@/components/ui/states";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/providers/toast-provider";
@@ -101,7 +102,7 @@ export function DriverSalarySection({
       )}
 
       {monthQuery.isSuccess && !salaryMonth && (
-        <div className="rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] px-4 py-4">
+        <div className="rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] px-4 py-4">
           <p className="text-sm text-muted-foreground">
             Current salary on the driver record is {formatCurrency(currentSalary)}.
             Starting the month saves that amount and later salary changes will not rewrite it.
@@ -119,12 +120,16 @@ export function DriverSalarySection({
 
       {salaryMonth && (
         <>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Figure label="Gross" value={formatCurrency(salaryMonth.gross_salary)} />
-            <Figure label="Advances" value={formatCurrency(advances)} />
-            <Figure label="Paid" value={formatCurrency(payments)} />
-            <Figure label="Remaining" value={formatCurrency(remaining)} />
-          </div>
+          {entriesQuery.isLoading ? (
+            <Skeleton className="h-44 w-full" />
+          ) : (
+            <SalaryPieChart
+              gross={salaryMonth.gross_salary}
+              paid={payments}
+              advance={advances}
+              remaining={remaining}
+            />
+          )}
           <div className="mt-3 flex flex-wrap gap-2">
             <Button type="button" variant="outline" onClick={() => setRecording("advance")}>
               Record advance
@@ -142,7 +147,7 @@ export function DriverSalarySection({
               {entries.map((entry) => (
                 <li
                   key={entry.id}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-border px-4 py-3 text-sm"
+                  className="flex items-center justify-between gap-3 rounded-[4px] border border-border px-4 py-3 text-sm"
                 >
                   <div>
                     <p className="font-medium">
@@ -178,15 +183,6 @@ export function DriverSalarySection({
         monthValue={monthValue}
       />
     </section>
-  );
-}
-
-function Figure({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-[20px] border border-border bg-card shadow-[var(--shadow-card)] px-3 py-3">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-lg font-semibold tabular-nums">{value}</p>
-    </div>
   );
 }
 
