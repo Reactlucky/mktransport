@@ -134,9 +134,9 @@ export function AttendanceCalendar({
 type SliceKey = "paid" | "advance" | "remaining";
 
 const SLICE_COLOR: Record<SliceKey, string> = {
-  paid: "var(--primary)",
-  advance: "var(--warning)",
-  remaining: "color-mix(in srgb, var(--muted-foreground) 42%, var(--card))",
+  paid: "var(--color-primary)",
+  advance: "var(--color-warning)",
+  remaining: "var(--color-base-300)",
 };
 
 function piePoint(angle: number, radius: number) {
@@ -147,15 +147,12 @@ function piePoint(angle: number, radius: number) {
   };
 }
 
-function donutSlice(start: number, end: number) {
-  const outer = 50;
-  const inner = 32;
+function pieSlice(start: number, end: number) {
+  const radius = 52;
   const large = end - start > 180 ? 1 : 0;
-  const a = piePoint(start, outer);
-  const b = piePoint(end, outer);
-  const c = piePoint(end, inner);
-  const d = piePoint(start, inner);
-  return `M ${a.x} ${a.y} A ${outer} ${outer} 0 ${large} 1 ${b.x} ${b.y} L ${c.x} ${c.y} A ${inner} ${inner} 0 ${large} 0 ${d.x} ${d.y} Z`;
+  const a = piePoint(start, radius);
+  const b = piePoint(end, radius);
+  return `M 60 60 L ${a.x} ${a.y} A ${radius} ${radius} 0 ${large} 1 ${b.x} ${b.y} Z`;
 }
 
 export function SalaryPieChart({
@@ -221,27 +218,18 @@ export function SalaryPieChart({
           {activePart.label} · {formatCurrency(activePart.value)}
         </div>
       )}
-      <div className="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">
-        <div className="relative size-40 shrink-0">
-          <svg viewBox="0 0 120 120" className="size-full" role="img" aria-label={`Paid ${formatCurrency(paid)}, advance ${formatCurrency(advance)}, remaining ${formatCurrency(remaining)}`}>
+      <div className="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-8">
+        <div className="shrink-0">
+          <svg viewBox="0 0 120 120" className="size-40" role="img" aria-label={`Paid ${formatCurrency(paid)}, advance ${formatCurrency(advance)}, remaining ${formatCurrency(remaining)}`}>
             {total <= 0 && (
-              <circle
-                cx="60"
-                cy="60"
-                r="41"
-                fill="none"
-                stroke="var(--border)"
-                strokeWidth="18"
-              />
+              <circle cx="60" cy="60" r="52" fill="var(--color-base-300)" />
             )}
             {drawn.length === 1 && total > 0 && (
               <circle
                 cx="60"
                 cy="60"
-                r="41"
-                fill="none"
-                stroke={SLICE_COLOR[drawn[0].key]}
-                strokeWidth="18"
+                r="52"
+                fill={SLICE_COLOR[drawn[0].key]}
                 className={active && active !== drawn[0].key ? "opacity-40" : ""}
                 onMouseMove={(event) => onSliceMove(event, drawn[0].key)}
                 onMouseLeave={() => setTip(null)}
@@ -251,7 +239,7 @@ export function SalaryPieChart({
               slices.map((slice) => (
                 <path
                   key={slice.key}
-                  d={donutSlice(slice.start, slice.end)}
+                  d={pieSlice(slice.start, slice.end)}
                   fill={SLICE_COLOR[slice.key]}
                   className={active && active !== slice.key ? "opacity-40" : "transition-opacity"}
                   onMouseMove={(event) => onSliceMove(event, slice.key)}
@@ -259,14 +247,12 @@ export function SalaryPieChart({
                 />
               ))}
           </svg>
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-sm font-semibold tabular leading-tight">
-              {formatCurrency(gross)}
+          <p className="mt-1 text-center text-sm">
+            <span className="font-semibold tabular">{formatCurrency(gross)}</span>
+            <span className="ml-1 text-xs uppercase tracking-wide text-muted-foreground">
+              gross
             </span>
-            <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              Gross
-            </span>
-          </div>
+          </p>
         </div>
         <ul className="grid w-full gap-1 sm:w-56">
           {parts.map((part) => (
