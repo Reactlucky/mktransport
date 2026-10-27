@@ -75,8 +75,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh">
       <NavigationProgress />
-      <div className="sticky top-0 hidden h-dvh shrink-0 p-3 lg:block">
-        <Sidebar collapsed={collapsed} floating />
+      <div className="sticky top-0 hidden h-dvh shrink-0 lg:block">
+        <Sidebar collapsed={collapsed} />
       </div>
 
       {menu !== "closed" && (
@@ -84,7 +84,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <button
             type="button"
             className={cn(
-              "menu-overlay absolute inset-0 bg-[#070b14]/40 backdrop-blur-sm",
+              "menu-overlay absolute inset-0 bg-neutral/50",
               menu === "closing" && "menu-overlay-out"
             )}
             aria-label="Close menu"
@@ -92,17 +92,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           />
           <div
             className={cn(
-              "menu-drawer absolute inset-y-3 left-3 z-10",
+              "menu-drawer absolute inset-y-0 left-0 z-10",
               menu === "closing" && "menu-drawer-out"
             )}
           >
-            <Sidebar onNavigate={closeMenu} floating />
+            <Sidebar onNavigate={closeMenu} />
           </div>
         </div>
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border/70 bg-background/70 px-3 backdrop-blur-xl sm:px-5">
+        <header className="navbar sticky top-0 z-30 min-h-16 border-b border-base-300 bg-base-100 px-2 sm:px-4">
           <Button
             type="button"
             variant="ghost"
@@ -123,17 +123,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           >
             {collapsed ? <Menu className="size-5" /> : <X className="size-5" />}
           </Button>
-          <h1 className="min-w-0 flex-1 truncate font-display text-lg font-semibold tracking-tight">
+          <h1 className="min-w-0 flex-1 truncate font-display text-2xl font-medium leading-none">
             {pageTitle(pathname)}
           </h1>
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="hidden h-10 items-center gap-2 rounded-[10px] border border-border bg-card/70 px-3 text-sm text-muted-foreground shadow-[var(--shadow-soft)] sm:inline-flex"
+            className="hidden h-10 items-center gap-2 border border-base-300 bg-base-100 px-3 text-sm text-base-content/70 sm:inline-flex"
           >
             <Search className="size-4" />
             Search
-            <kbd className="rounded-[3px] bg-muted px-1.5 py-0.5 text-[11px]">⌘K</kbd>
+            <kbd className="kbd kbd-sm">⌘K</kbd>
           </button>
           <Button
             type="button"
@@ -163,7 +163,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Button>
           <Link
             href="/dashboard/settings"
-            className="inline-flex size-11 items-center justify-center rounded-[7px] text-foreground hover:bg-muted"
+            className="btn btn-ghost btn-square"
             aria-label="Settings"
           >
             <Settings className="size-5" />

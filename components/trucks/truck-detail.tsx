@@ -22,6 +22,7 @@ import { AssignmentHistory } from "@/components/drivers/assignment-history";
 import { useToast } from "@/components/providers/toast-provider";
 import { cn, formatDate } from "@/lib/utils";
 import { vehicleAge } from "@/lib/calculations/papers";
+import { TruckArt } from "@/components/trucks/truck-art";
 
 const statusLabel: Record<TruckStatus, string> = {
   available: "Available",
@@ -107,6 +108,8 @@ export function TruckDetailPage({ id }: { id: string }) {
           </Button>
         }
       />
+
+      <TruckArt plate={truck.registration_number} className="mx-auto mb-6 w-[82%] max-w-2xl" />
 
       <Card className="mb-6">
         <CardContent className="grid gap-4 sm:grid-cols-3">

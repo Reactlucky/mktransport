@@ -97,7 +97,7 @@ export function CommandSearch({
     <div className="fixed inset-0 z-[80] flex items-start justify-center p-4 pt-[12vh]">
       <button
         type="button"
-        className="absolute inset-0 bg-[#070b14]/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-neutral/50"
         aria-label="Close search"
         onClick={onClose}
       />
@@ -105,7 +105,7 @@ export function CommandSearch({
         role="dialog"
         aria-modal="true"
         aria-label="Search records"
-        className="dialog-panel relative z-10 w-full max-w-xl overflow-hidden rounded-[12px] border border-border bg-card shadow-[var(--shadow-floating)]"
+        className="dialog-panel card card-border relative z-10 w-full max-w-xl overflow-hidden bg-base-100 shadow-none"
       >
         <div className="flex items-center gap-3 border-b border-border px-4">
           <Search className="size-4 text-muted-foreground" />
@@ -148,9 +148,7 @@ export function CommandSearch({
                     {result.subtitle}
                   </span>
                 </span>
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  {result.group}
-                </span>
+                <span className="badge badge-ghost badge-sm">{result.group}</span>
               </button>
             </li>
           ))}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Trip } from "@/lib/types";
-import { Pencil, Trash2 } from "lucide-react";
+import { ArrowRight, Pencil, Trash2 } from "lucide-react";
 
 export function TripCard({
   trip,
@@ -37,9 +37,7 @@ export function TripCard({
       <p className="mt-4 flex items-center gap-2 text-sm">
         <span className="truncate">{trip.from_location}</span>
         <span className="h-px flex-1 bg-border" aria-hidden />
-        <span className="text-primary" aria-hidden>
-          →
-        </span>
+        <ArrowRight className="size-6 shrink-0 text-primary" aria-hidden />
         <span className="h-px flex-1 bg-border" aria-hidden />
         <span className="truncate text-right">{trip.to_location}</span>
       </p>

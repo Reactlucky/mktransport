@@ -1,201 +1,147 @@
-import Image from "next/image";
 import Link from "next/link";
 import { BrandMark } from "@/components/brand-mark";
-import {
-  CustomerIcon,
-  DriverIcon,
-  ReminderIcon,
-  ReportIcon,
-  RouteIcon,
-  TruckIcon,
-} from "@/components/icons/transport";
+import { TruckArt } from "@/components/trucks/truck-art";
 
-const features = [
+const records = [
   {
-    title: "Trip management",
+    title: "Trips",
     description:
-      "Record date, truck, route, customer and rent in seconds — the same notebook entries, without the paper.",
-    icon: RouteIcon,
+      "Date, truck, route, customer, and rent — the same notebook line, without the paper.",
   },
   {
-    title: "Truck management",
+    title: "Trucks",
     description:
-      "Keep registration numbers, models and status in one place so you always know what is running.",
-    icon: TruckIcon,
+      "Registration, model, and whether the vehicle is running, waiting, or in the workshop.",
   },
   {
-    title: "Driver management",
+    title: "Drivers",
     description:
-      "Maintain driver contacts and prepare for future assignments, attendance and salary tracking.",
-    icon: DriverIcon,
+      "Contacts, assignments, attendance, and salary stay attached to the person who drove.",
   },
   {
-    title: "Business reports",
+    title: "Customers",
     description:
-      "See monthly trips and rent by truck and customer — clear numbers, not cluttered charts.",
-    icon: ReportIcon,
+      "Party name, phone, and location, ready when you book the next load.",
   },
   {
-    title: "Reminders",
+    title: "Rent",
     description:
-      "Architecture ready for EMI, insurance, fitness and service reminders when you need them.",
-    icon: ReminderIcon,
+      "Monthly trips and rent by truck and customer, as a ledger rather than a chart wall.",
+  },
+  {
+    title: "Papers",
+    description:
+      "EMI, insurance, and fitness dates sit with the truck so a due date is not a surprise.",
   },
 ];
 
-const benefits = [
-  "Replace notebooks with a single digital record",
-  "Enter a trip in under a minute on phone or desktop",
-  "See today’s fleet status at a glance",
-  "Know monthly earnings without spreadsheet work",
+const reasons = [
+  {
+    n: "01",
+    text: "One record replaces the notebook, the spreadsheet, and the WhatsApp search.",
+  },
+  {
+    n: "02",
+    text: "A trip can be written on a phone at the yard or at a desk after the truck leaves.",
+  },
+  {
+    n: "03",
+    text: "The fleet status is a count: running, available, or in maintenance.",
+  },
+  {
+    n: "04",
+    text: "Month-end rent is a total you can read, not a sheet you have to rebuild.",
+  },
 ];
 
 export function LandingPage() {
   return (
-    <div className="landing-light min-h-dvh text-foreground">
-      <header className="sticky top-0 z-20 border-b border-border/70 bg-background/70 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <BrandMark />
-            <span className="font-display text-sm font-semibold tracking-tight md:text-base">
-              MK Transport
-            </span>
+    <div className="min-h-dvh bg-base-100 text-base-content">
+      <header className="navbar sticky top-0 z-20 border-b border-base-300 bg-base-100 px-4 md:px-6">
+        <div className="navbar-start">
+          <Link href="/" className="flex items-center">
+            <BrandMark className="h-12 w-auto sm:h-14" />
           </Link>
-          <Link
-            href="/login"
-            className="inline-flex h-11 items-center rounded-[7px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-4 text-sm font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
-          >
-            Get Started
+        </div>
+        <div className="navbar-end">
+          <Link href="/login" className="btn btn-primary">
+            Sign in
           </Link>
         </div>
       </header>
 
-      {/* Hero — brand first, one headline, one sentence, one CTA, dominant illustration */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--accent)_0%,_transparent_55%)] opacity-70" />
-        <div className="relative mx-auto grid max-w-6xl gap-5 px-4 py-8 md:grid-cols-2 md:items-center md:gap-8 md:px-6 md:py-16 lg:py-20">
+      <section className="border-b border-base-300">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:px-6 md:py-20 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)] lg:items-end">
           <div>
-            <p className="font-display text-sm font-semibold uppercase tracking-[0.14em] text-primary">
-              MK Transport
-            </p>
-            <h1 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-[2.75rem]">
-              Manage Your Trucks. Trips. Drivers. Business.
+            <p className="text-sm text-base-content/60">Office book for a small fleet</p>
+            <h1 className="mt-3 max-w-xl font-display text-4xl font-medium leading-[1.05] sm:text-5xl lg:text-6xl">
+              Trucks, trips, and rent, written down once.
             </h1>
-            <p className="mt-4 max-w-md text-base text-muted-foreground md:text-lg">
-              Replace notebooks and manual tracking with one simple digital
-              platform built for a small transport fleet.
+            <p className="mt-5 max-w-md text-base leading-relaxed text-base-content/70">
+              MK Transport keeps the yard’s daily entries: who drove, where the
+              load went, and what it earned.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link
-                href="/login"
-                className="inline-flex h-12 items-center rounded-[7px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-6 text-base font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
-              >
-                Get Started
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Link href="/login" className="btn btn-primary btn-lg">
+                Open the desk
               </Link>
-              <a
-                href="#features"
-                className="inline-flex h-12 items-center rounded-[7px] border border-border bg-card px-6 text-base font-medium shadow-[var(--shadow-soft)] hover:bg-muted"
-              >
-                See features
+              <a href="#records" className="link link-hover">
+                What the book holds
               </a>
             </div>
           </div>
-          <div className="order-last mx-auto w-[82%] max-w-xs md:order-none md:mx-0 md:w-full md:max-w-none md:pl-4">
-            <div className="overflow-hidden rounded-[11px] bg-gradient-to-br from-[#dbeafe] via-[#eef6ff] to-white px-2 py-2.5 shadow-[var(--shadow-floating)] sm:rounded-[14px] sm:px-6 sm:py-6">
-              <Image
-                src="/mk-truck.png"
-                alt="MK Transport truck"
-                width={1024}
-                height={373}
-                priority
-                className="h-auto w-full"
-              />
-            </div>
-          </div>
+          <TruckArt plate="MK Transport" priority className="w-full" />
         </div>
       </section>
 
-      <section id="features" className="mx-auto max-w-6xl px-4 py-14 md:px-6 md:py-20">
-        <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
-          Built for daily transport work
-        </h2>
-        <p className="mt-2 max-w-xl text-muted-foreground">
-          Focused tools for the operations you already run — not a generic
-          analytics dashboard.
-        </p>
-        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f) => {
-            const Icon = f.icon;
-            return (
-              <div key={f.title} className="rounded-[10px] border border-border bg-card p-5 shadow-[var(--shadow-card)]">
-                <span className="mb-3 inline-flex size-10 items-center justify-center rounded-[3px] bg-accent text-accent-foreground">
-                  <Icon className="size-5" />
-                </span>
-                <h3 className="font-display text-lg font-semibold">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {f.description}
-                </p>
-              </div>
-            );
-          })}
-          <div className="rounded-[10px] border border-border bg-card p-5 shadow-[var(--shadow-card)]">
-            <span className="mb-3 inline-flex size-10 items-center justify-center rounded-[3px] bg-accent text-accent-foreground">
-              <CustomerIcon className="size-5" />
-            </span>
-            <h3 className="font-display text-lg font-semibold">
-              Customer records
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Keep party names, phones and locations ready for quick trip
-              selection.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-border bg-card">
-        <div className="mx-auto max-w-6xl px-4 py-14 md:px-6 md:py-16">
-          <h2 className="font-display text-2xl font-semibold tracking-tight">
-            Why switch from the notebook
+      <section id="records" className="mx-auto max-w-6xl px-4 py-14 md:px-6 md:py-20">
+        <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-16">
+          <h2 className="font-display text-3xl font-medium leading-tight">
+            What the book holds
           </h2>
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-            {benefits.map((b) => (
-              <li
-                key={b}
-                className="flex gap-3 text-sm leading-relaxed text-foreground"
-              >
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
-                {b}
+          <dl className="divide-y divide-base-300 border-y border-base-300">
+            {records.map((record) => (
+              <div key={record.title} className="grid gap-1 py-5 sm:grid-cols-[140px_1fr] sm:gap-8">
+                <dt className="font-medium">{record.title}</dt>
+                <dd className="text-sm leading-relaxed text-base-content/70">
+                  {record.description}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      <section className="border-y border-base-300 bg-base-200">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-14 md:grid-cols-[220px_1fr] md:gap-16 md:px-6 md:py-16">
+          <h2 className="font-display text-3xl font-medium leading-tight">
+            Why the notebook goes
+          </h2>
+          <ol className="divide-y divide-base-300 border-y border-base-300">
+            {reasons.map((reason) => (
+              <li key={reason.n} className="grid grid-cols-[3rem_1fr] gap-4 py-5">
+                <span className="font-display text-lg text-base-content/50">{reason.n}</span>
+                <span className="text-sm leading-relaxed">{reason.text}</span>
               </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-14 text-center md:px-6 md:py-20">
-        <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
-          Ready to digitize your fleet?
-        </h2>
-        <p className="mx-auto mt-3 max-w-md text-muted-foreground">
-          Open MK Transport, see today’s picture, and record the next trip in
-          seconds.
-        </p>
-        <Link
-          href="/login"
-          className="mt-7 inline-flex h-12 items-center rounded-[7px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-8 text-base font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
-        >
-          Get Started
+      <section className="mx-auto flex max-w-6xl flex-col items-start gap-4 px-4 py-14 md:px-6 md:py-20">
+        <h2 className="font-display text-3xl font-medium">The next trip can go in the book.</h2>
+        <Link href="/login" className="btn btn-primary">
+          Sign in
         </Link>
       </section>
 
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-4 py-8 text-sm text-muted-foreground md:flex-row md:items-center md:px-6">
-          <div className="flex items-center gap-2 text-foreground">
-            <BrandMark className="size-7" />
-            <span className="font-medium">MK Transport</span>
+      <footer className="footer sm:footer-horizontal border-t border-base-300 px-4 py-8 text-sm text-base-content/70 md:px-6">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-2 text-base-content">
+          <BrandMark className="h-12 w-auto" />
           </div>
-          <p>Transport management for small fleets.</p>
-          <Link href="/login" className="hover:text-foreground">
+          <p>Transport records for a small fleet.</p>
+          <Link href="/login" className="link link-hover">
             Sign in
           </Link>
         </div>

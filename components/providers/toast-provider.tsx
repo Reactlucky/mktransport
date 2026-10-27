@@ -48,9 +48,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           <div
             key={t.id}
             className={cn(
-              "pointer-events-auto flex w-full max-w-md items-start gap-3 rounded-[10px] border border-border bg-card/90 px-4 py-3 text-foreground shadow-[var(--shadow-floating)] backdrop-blur-xl dialog-panel",
-              t.variant === "success" && "text-success",
-              t.variant === "error" && "text-danger"
+              "alert pointer-events-auto w-full max-w-md shadow-none dialog-panel",
+              t.variant === "success" && "alert-success alert-soft",
+              t.variant === "error" && "alert-error alert-soft",
+              t.variant === "info" && "alert-soft"
             )}
             role="status"
           >

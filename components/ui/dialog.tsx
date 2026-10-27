@@ -44,7 +44,7 @@ export function Dialog({
     <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6">
       <button
         type="button"
-        className="absolute inset-0 bg-[#070b14]/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-neutral/50"
         aria-label="Close dialog"
         onClick={onClose}
       />
@@ -54,10 +54,10 @@ export function Dialog({
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
-          "dialog-panel relative z-10 flex w-full max-h-[92vh] flex-col overflow-hidden border border-border bg-card shadow-[var(--shadow-floating)]",
+          "dialog-panel card card-border relative z-10 flex w-full max-h-[92vh] flex-col overflow-hidden bg-base-100 shadow-none",
           fullScreenMobile
-            ? "h-full max-h-full rounded-none sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-[12px]"
-            : "max-w-lg rounded-t-[12px] sm:rounded-[12px]",
+            ? "h-full max-h-full rounded-none sm:h-auto sm:max-h-[92vh] sm:max-w-lg"
+            : "max-w-lg rounded-none sm:rounded-box",
           className
         )}
       >

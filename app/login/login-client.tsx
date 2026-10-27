@@ -61,21 +61,17 @@ export default function LoginPage() {
     <div className="flex min-h-dvh flex-col bg-background">
       <main className="flex flex-1 flex-col items-center justify-center px-5 py-10">
         <Link href="/" className="mb-8 flex w-full max-w-sm flex-col items-center px-2 text-center">
-          <BrandMark className="h-24 w-44 rounded-[14px] p-3" />
-          <span className="mt-4 max-w-full text-balance font-display text-3xl font-semibold tracking-tight text-navy sm:text-4xl">
-            MK TRANSPORT
-          </span>
-          <span className="mt-2 max-w-xs text-sm text-muted-foreground">
-            Trucks, trips, drivers, and rent in one place.
+          <BrandMark className="h-auto w-full max-w-xs" />
+          <span className="mt-2 max-w-xs text-sm text-base-content/70">
+            The office book for trucks, trips, and rent.
           </span>
         </Link>
 
-        <div className="w-full max-w-md rounded-[14px] border border-border bg-card p-6 shadow-[var(--shadow-floating)] md:p-8">
-          <h1 className="font-display text-2xl font-semibold tracking-tight">
-            Sign in
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Access your transport management dashboard.
+        <div className="card card-border w-full max-w-md bg-base-100 shadow-none">
+          <div className="card-body">
+          <h1 className="font-display text-3xl font-medium">Sign in</h1>
+          <p className="text-sm text-base-content/70">
+            Use the username from the office.
           </p>
 
           <form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate>
@@ -110,17 +106,18 @@ export default function LoginPage() {
 
             {formError && (
               <div
-                className="rounded-[3px] border border-danger/30 bg-danger-muted px-3 py-2 text-sm text-danger"
+                className="alert alert-soft alert-error text-sm"
                 role="alert"
               >
                 {formError}
               </div>
             )}
 
-            <Button type="submit" className="w-full" loading={loading}>
+            <Button type="submit" className="btn-block" loading={loading}>
               {loading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
+          </div>
         </div>
       </main>
       <footer className="px-6 pb-8 text-center text-sm text-muted-foreground">

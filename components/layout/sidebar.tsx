@@ -46,7 +46,6 @@ export const navItems = groups.flatMap((group) => group.items);
 export function Sidebar({
   collapsed,
   onNavigate,
-  floating = false,
 }: {
   collapsed?: boolean;
   onNavigate?: () => void;
@@ -57,59 +56,40 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "flex h-full flex-col text-sidebar-foreground",
-        floating
-          ? "rounded-[14px] border border-border bg-sidebar shadow-[var(--shadow-floating)] backdrop-blur-xl"
-          : "bg-sidebar backdrop-blur-xl",
-        "transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        collapsed ? "w-[76px]" : "w-[248px]"
+        "flex h-full flex-col border-r border-neutral-content/10 bg-neutral text-neutral-content",
+        "transition-[width] duration-200 ease-out",
+        collapsed ? "w-[72px]" : "w-60"
       )}
     >
-      <div className={cn("flex h-16 items-center px-4", collapsed && "justify-center px-2")}>
-        <Link href="/dashboard" className="flex items-center gap-2.5" onClick={onNavigate}>
-          <BrandMark />
-          {!collapsed && (
-            <span className="font-display text-base font-semibold tracking-tight">
-              MK Transport
-            </span>
-          )}
+      <div className={cn("flex items-center px-3 py-3", collapsed && "justify-center px-2")}>
+        <Link href="/dashboard" className="flex w-full items-center justify-center" onClick={onNavigate}>
+          <BrandMark className="h-auto w-full" />
         </Link>
       </div>
-      <nav className="flex-1 space-y-5 overflow-y-auto px-3 pb-4" aria-label="Main">
+      <nav className="flex-1 overflow-y-auto px-2 pb-4" aria-label="Main">
         {groups.map((group) => (
-          <div key={group.label}>
-            {!collapsed && (
-              <p className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-sidebar-muted">
-                {group.label}
-              </p>
-            )}
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                const active = item.exact
-                  ? pathname === item.href
-                  : pathname.startsWith(item.href);
-                const Icon = item.icon;
-                return (
+          <ul key={group.label} className="menu menu-md w-full px-0">
+            {!collapsed && <li className="menu-title text-neutral-content/55">{group.label}</li>}
+            {group.items.map((item) => {
+              const active = item.exact
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
+              const Icon = item.icon;
+              return (
+                <li key={item.href}>
                   <Link
-                    key={item.href}
                     href={item.href}
                     onClick={onNavigate}
-                    className={cn(
-                      "flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm font-medium transition duration-200",
-                      collapsed && "justify-center px-2",
-                      active
-                        ? "bg-sidebar-active text-accent-foreground"
-                        : "text-sidebar-muted hover:bg-white/40 hover:text-sidebar-foreground dark:hover:bg-white/5"
-                    )}
+                    className={cn(collapsed && "justify-center", active && "menu-active")}
                     title={collapsed ? item.label : undefined}
                   >
                     <Icon className="size-5 shrink-0" />
                     {!collapsed && <span>{item.label}</span>}
                   </Link>
-                );
-              })}
-            </div>
-          </div>
+                </li>
+              );
+            })}
+          </ul>
         ))}
       </nav>
     </aside>

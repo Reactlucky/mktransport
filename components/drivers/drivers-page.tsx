@@ -9,7 +9,7 @@ import { listDrivers, createDriver, updateDriver } from "@/lib/services/drivers"
 import { queryKeys } from "@/lib/query-keys";
 import { useDebouncedValue } from "@/lib/use-debounced-value";
 import type { Driver, DriverStatusFilter } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import {
   PageHeader,
   EmptyState,
@@ -19,12 +19,18 @@ import {
 } from "@/components/ui/states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog } from "@/components/ui/dialog";
 import { DriverForm } from "@/components/drivers/driver-form";
 import { useToast } from "@/components/providers/toast-provider";
 import { listOpenAssignments } from "@/lib/services/assignments";
+
+const tileTints = [
+  "bg-accent text-accent-foreground",
+  "bg-success-muted text-success",
+  "bg-warning-muted text-warning",
+  "bg-primary/15 text-primary",
+];
 
 function initials(name: string) {
   return name
@@ -33,6 +39,11 @@ function initials(name: string) {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
+}
+
+function tileTint(name: string) {
+  const hash = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return tileTints[hash % tileTints.length];
 }
 
 export function DriversPageClient() {
@@ -146,24 +157,41 @@ export function DriversPageClient() {
             className="pl-9"
           />
         </div>
-        <Select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as DriverStatusFilter)}
-          aria-label="Filter by status"
-          className="sm:w-40"
-        >
-          <option value="all">All statuses</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </Select>
+        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by status">
+          {(
+            [
+              ["all", "All"],
+              ["active", "Active"],
+              ["inactive", "Inactive"],
+            ] as const
+          ).map(([value, label]) => {
+            const active = status === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={active}
+                className={cn(
+                  "rounded-[6px] border px-3 py-1.5 text-xs font-medium",
+                  active
+                    ? "border-primary bg-accent text-accent-foreground"
+                    : "border-border text-muted-foreground hover:bg-muted"
+                )}
+                onClick={() => setStatus(value)}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <Refreshing active={query.isFetching && !query.isLoading} />
 
       {query.isLoading && (
-        <div className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full" />
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-44 w-full" />
           ))}
         </div>
       )}
@@ -199,138 +227,13 @@ export function DriversPageClient() {
       )}
 
       {query.isSuccess && query.data.length > 0 && (
-        <>
-          <div className="space-y-3 md:hidden">
-            {query.data.map((d) => (
-              <article
-                key={d.id}
-                className="flex cursor-pointer items-center justify-between rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] p-4 hover:bg-muted/40"
-                onClick={() => router.push(`/dashboard/drivers/${d.id}`)}
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-[11px] bg-accent font-display text-sm font-semibold text-accent-foreground">
-                    {initials(d.name)}
-                  </span>
-                  <div className="min-w-0">
-                  <Link
-                    href={`/dashboard/drivers/${d.id}`}
-                    className="font-semibold text-primary hover:underline"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {d.name}
-                  </Link>
-                  <p className="text-sm text-muted-foreground">
-                    {d.phone || "No phone"}
-                    {d.salary > 0 ? ` · ${formatCurrency(d.salary)}` : ""}
-                  </p>
-                  {truckByDriver.get(d.id) && (
-                    <p className="text-xs text-muted-foreground">
-                      {truckByDriver.get(d.id)}
-                    </p>
-                  )}
-                  </div>
-                </div>
-                <div
-                  className="flex flex-col items-end gap-2"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <StatusBadge active={d.is_active} />
-                  <button
-                    type="button"
-                    className="text-xs font-medium text-primary hover:underline"
-                    onClick={() =>
-                      toggleMutation.mutate({
-                        id: d.id,
-                        is_active: !d.is_active,
-                      })
-                    }
-                  >
-                    {d.is_active ? "Deactivate" : "Activate"}
-                  </button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditing(d)}
-                  >
-                    Edit
-                  </Button>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="hidden overflow-hidden rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] md:block">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-border bg-muted/50 text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3 font-medium">Name</th>
-                  <th className="px-4 py-3 font-medium">Phone</th>
-                  <th className="px-4 py-3 font-medium">Salary</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {query.data.map((d) => (
-                  <tr
-                    key={d.id}
-                    className="cursor-pointer border-b border-border last:border-0 hover:bg-muted/40"
-                    onClick={() => router.push(`/dashboard/drivers/${d.id}`)}
-                  >
-                    <td className="px-4 py-3 font-medium">
-                      <div className="flex items-center gap-3">
-                        <span className="flex size-9 items-center justify-center rounded-[9px] bg-accent font-display text-xs font-semibold text-accent-foreground">
-                          {initials(d.name)}
-                        </span>
-                        <div>
-                          <Link
-                            href={`/dashboard/drivers/${d.id}`}
-                            className="text-primary hover:underline"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {d.name}
-                          </Link>
-                          {truckByDriver.get(d.id) && (
-                            <p className="text-xs font-normal text-muted-foreground">
-                              {truckByDriver.get(d.id)}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">{d.phone || "—"}</td>
-                    <td className="px-4 py-3">{formatCurrency(d.salary)}</td>
-                    <td className="px-4 py-3">
-                      <StatusBadge active={d.is_active} />
-                    </td>
-                    <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        type="button"
-                        className="mr-3 text-xs font-medium text-primary hover:underline"
-                        onClick={() =>
-                          toggleMutation.mutate({
-                            id: d.id,
-                            is_active: !d.is_active,
-                          })
-                        }
-                      >
-                        {d.is_active ? "Deactivate" : "Activate"}
-                      </button>
-                      <button
-                        type="button"
-                        className="text-xs font-medium text-primary hover:underline"
-                        onClick={() => setEditing(d)}
-                      >
-                        Edit
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
+        <DriverGrid
+          drivers={query.data}
+          truckByDriver={truckByDriver}
+          onOpen={(id) => router.push(`/dashboard/drivers/${id}`)}
+          onEdit={setEditing}
+          onToggle={(id, is_active) => toggleMutation.mutate({ id, is_active })}
+        />
       )}
 
       <Dialog open={open} onClose={() => setOpen(false)} title="Add Driver" fullScreenMobile>
@@ -358,6 +261,102 @@ export function DriversPageClient() {
           />
         )}
       </Dialog>
+    </div>
+  );
+}
+
+function DriverGrid({
+  drivers,
+  truckByDriver,
+  onOpen,
+  onEdit,
+  onToggle,
+}: {
+  drivers: Driver[];
+  truckByDriver: Map<string, string>;
+  onOpen: (id: string) => void;
+  onEdit: (driver: Driver) => void;
+  onToggle: (id: string, isActive: boolean) => void;
+}) {
+  const active = drivers.filter((driver) => driver.is_active).length;
+
+  return (
+    <div>
+      <p className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+        <span>
+          <span className="font-semibold text-foreground tabular">{drivers.length}</span> total
+        </span>
+        <span>
+          <span className="font-semibold text-success tabular">{active}</span> active
+        </span>
+        <span>
+          <span className="font-semibold text-muted-foreground tabular">
+            {drivers.length - active}
+          </span>{" "}
+          inactive
+        </span>
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {drivers.map((driver) => {
+          const truck = truckByDriver.get(driver.id);
+          return (
+            <article
+              key={driver.id}
+              className="flex cursor-pointer flex-col rounded-[10px] border border-border bg-card shadow-[var(--shadow-card)] hover:bg-muted/40"
+              onClick={() => onOpen(driver.id)}
+            >
+              <div className="flex items-start justify-between gap-3 px-4 pt-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span
+                    className={cn(
+                      "flex size-11 shrink-0 items-center justify-center rounded-[8px] font-display text-sm font-semibold",
+                      tileTint(driver.name)
+                    )}
+                  >
+                    {initials(driver.name)}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">{driver.name}</p>
+                    <p className="truncate text-sm text-muted-foreground">
+                      {truck || "No truck"}
+                    </p>
+                  </div>
+                </div>
+                <StatusBadge active={driver.is_active} />
+              </div>
+              <dl className="mt-4 grid grid-cols-2 gap-3 px-4 pb-4">
+                <div>
+                  <dt className="text-xs text-muted-foreground">Phone</dt>
+                  <dd className="mt-0.5 text-sm">{driver.phone || "—"}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Salary</dt>
+                  <dd className="mt-0.5 text-sm">{formatCurrency(driver.salary)}</dd>
+                </div>
+              </dl>
+              <div
+                className="mt-auto flex gap-3 border-t border-border px-4 py-3"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  className="text-xs font-medium text-primary hover:underline"
+                  onClick={() => onEdit(driver)}
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  className="text-xs font-medium text-primary hover:underline"
+                  onClick={() => onToggle(driver.id, !driver.is_active)}
+                >
+                  {driver.is_active ? "Deactivate" : "Activate"}
+                </button>
+              </div>
+            </article>
+          );
+        })}
+      </div>
     </div>
   );
 }

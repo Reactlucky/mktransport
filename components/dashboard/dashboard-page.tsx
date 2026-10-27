@@ -97,50 +97,28 @@ export function DashboardPageClient() {
   const dateLabel = clock?.dateLabel ?? "";
 
   const kpis = [
-    { label: "Fleet", value: fleet?.total ?? 0, tone: "bg-[#0B1F3A] text-white" },
-    { label: "Running", value: fleet?.running ?? 0, tone: "bg-accent text-accent-foreground" },
-    { label: "Available", value: fleet?.available ?? 0, tone: "bg-success-muted text-success" },
-    { label: "Maintenance", value: fleet?.maintenance ?? 0, tone: "bg-warning-muted text-warning" },
+    { label: "Fleet", value: fleet?.total ?? 0 },
+    { label: "Running", value: fleet?.running ?? 0 },
+    { label: "Available", value: fleet?.available ?? 0 },
+    { label: "Maintenance", value: fleet?.maintenance ?? 0 },
   ];
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      <section className="relative overflow-hidden rounded-[14px] border border-border bg-card p-6 shadow-[var(--shadow-card)] md:p-8">
-        <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground">{dateLabel}</p>
-            <h2 className="mt-1 font-display text-3xl font-semibold tracking-tight text-navy md:text-4xl">
-              {greeting}
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {fleet
-                ? `${fleet.total} trucks · ${fleet.running} running · ${fleet.available} available`
-                : "Loading the fleet"}
-            </p>
-          </div>
-          <Link
-            href="/dashboard/trips/new"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-[7px] bg-gradient-to-br from-[#2563eb] to-[#60a5fa] px-5 text-sm font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)]"
-          >
-            <Plus className="size-4" />
-            Add Trip
-          </Link>
+    <div className="mx-auto max-w-6xl space-y-8">
+      <section className="flex flex-col gap-4 border-b border-base-300 pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm text-base-content/60">{dateLabel}</p>
+          <h2 className="mt-1 font-display text-4xl font-medium leading-none">{greeting}</h2>
+          <p className="mt-3 text-sm text-base-content/70">
+            {fleet
+              ? `${fleet.total} trucks · ${fleet.running} running · ${fleet.available} available`
+              : "Loading the fleet"}
+          </p>
         </div>
-        <svg
-          className="pointer-events-none absolute -right-6 bottom-0 h-28 w-72 text-primary/30"
-          viewBox="0 0 280 80"
-          fill="none"
-          aria-hidden
-        >
-          <path
-            d="M8 62 C 70 62, 80 18, 140 18 S 210 62, 272 28"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-          <circle cx="8" cy="62" r="5" fill="currentColor" />
-          <circle cx="272" cy="28" r="5" fill="currentColor" />
-        </svg>
+        <Link href="/dashboard/trips/new" className="btn btn-primary">
+          <Plus className="size-4" />
+          Add trip
+        </Link>
       </section>
 
       <section aria-label="Fleet and month">
@@ -159,50 +137,47 @@ export function DashboardPageClient() {
           />
         )}
         {trucksQuery.isSuccess && (
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
+          <div className="fleet-stats stats w-full grid-cols-2 border border-base-300 bg-base-100 shadow-none md:grid-cols-3 xl:grid-cols-6">
             {kpis.map((stat) => (
-              <div
-                key={stat.label}
-                className={`rounded-[10px] p-4 shadow-[var(--shadow-soft)] ${stat.tone}`}
-              >
-                <p className="text-xs font-medium opacity-80">{stat.label}</p>
-                <p className="mt-2 font-display text-3xl font-semibold tabular">{stat.value}</p>
+              <div key={stat.label} className="stat">
+                <div className="stat-title">{stat.label}</div>
+                <div className="stat-value text-3xl tabular">{stat.value}</div>
               </div>
             ))}
-            <div className="rounded-[10px] border border-border bg-card p-4 shadow-[var(--shadow-card)]">
-              <p className="text-xs font-medium text-muted-foreground">Trips this month</p>
+            <div className="stat">
+              <div className="stat-title">Trips this month</div>
               {monthly.isLoading ? (
                 <Skeleton className="mt-2 h-9 w-16" />
               ) : monthly.isError ? (
                 <button
                   type="button"
-                  className="mt-2 text-sm font-medium text-danger"
+                  className="mt-2 text-sm font-medium text-error"
                   onClick={() => monthly.refetch()}
                 >
                   Retry
                 </button>
               ) : (
-                <p className="mt-2 font-display text-3xl font-semibold tabular">
+                <div className="stat-value text-3xl tabular">
                   {monthly.data?.trip_count ?? "—"}
-                </p>
+                </div>
               )}
             </div>
-            <div className="rounded-[10px] border border-border bg-card p-4 shadow-[var(--shadow-card)]">
-              <p className="text-xs font-medium text-muted-foreground">Rent this month</p>
+            <div className="stat">
+              <div className="stat-title">Rent this month</div>
               {monthly.isLoading ? (
                 <Skeleton className="mt-2 h-8 w-24" />
               ) : monthly.isError ? (
                 <button
                   type="button"
-                  className="mt-2 text-sm font-medium text-danger"
+                  className="mt-2 text-sm font-medium text-error"
                   onClick={() => monthly.refetch()}
                 >
                   Retry
                 </button>
               ) : (
-                <p className="mt-2 font-display text-2xl font-semibold tabular text-primary">
+                <div className="stat-value text-2xl tabular text-primary">
                   {monthly.data ? formatCurrency(monthly.data.total_rent) : "—"}
-                </p>
+                </div>
               )}
             </div>
           </div>
@@ -225,21 +200,16 @@ export function DashboardPageClient() {
         )}
       </section>
 
-      <section aria-label="Quick actions" className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {[
-          { href: "/dashboard/trips/new", label: "Add Trip" },
-          { href: "/dashboard/trucks", label: "Add Truck" },
-          { href: "/dashboard/customers", label: "Add Customer" },
-          { href: "/dashboard/drivers", label: "Add Driver" },
-        ].map((action) => (
-          <Link
-            key={action.href}
-            href={action.href}
-            className="rounded-[10px] border border-border bg-card px-4 py-4 text-sm font-medium shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5"
-          >
-            {action.label}
-          </Link>
-        ))}
+      <section aria-label="Quick actions" className="flex flex-wrap gap-2">
+        <Link href="/dashboard/trucks" className="btn btn-outline btn-sm">
+          Trucks
+        </Link>
+        <Link href="/dashboard/customers" className="btn btn-outline btn-sm">
+          Customers
+        </Link>
+        <Link href="/dashboard/drivers" className="btn btn-outline btn-sm">
+          Drivers
+        </Link>
       </section>
 
       <section aria-labelledby="reminders-heading">
@@ -270,18 +240,14 @@ export function DashboardPageClient() {
                 <li key={`${item.truckId}-${item.kind}`}>
                   <Link
                     href={`/dashboard/trucks/${item.truckId}`}
-                    className={
-                      overdue
-                        ? "flex h-full items-center justify-between gap-3 rounded-[10px] border border-danger/20 bg-[color-mix(in_srgb,var(--danger)_10%,white)] px-4 py-3.5 dark:bg-[color-mix(in_srgb,var(--danger)_16%,transparent)]"
-                        : "flex h-full items-center justify-between gap-3 rounded-[10px] border border-warning/25 bg-[color-mix(in_srgb,var(--warning)_12%,white)] px-4 py-3.5 dark:bg-[color-mix(in_srgb,var(--warning)_18%,transparent)]"
-                    }
+                    className="flex h-full items-center justify-between gap-3 rounded-box border border-base-300 bg-base-100 px-4 py-3.5"
                   >
                     <span className="min-w-0">
                       <span
                         className={
                           overdue
-                            ? "inline-flex rounded-[6px] bg-white/80 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-danger"
-                            : "inline-flex rounded-[6px] bg-white/80 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-warning"
+                            ? "badge badge-soft badge-error"
+                            : "badge badge-soft badge-warning"
                         }
                       >
                         {kind}

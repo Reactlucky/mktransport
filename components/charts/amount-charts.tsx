@@ -79,7 +79,7 @@ export function DailyRentChart({
       >
         {tip && (
           <div
-            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-[4px] bg-[#0b1f3a] px-2 py-1 text-xs font-medium whitespace-nowrap text-white"
+            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-box bg-neutral px-2 py-1 text-xs font-medium whitespace-nowrap text-neutral-content"
             style={{ left: tip.x, top: Math.max(tip.y - 8, 18) }}
           >
             {days[tip.index].day} · {formatCurrency(days[tip.index].rent)}
@@ -99,10 +99,10 @@ export function DailyRentChart({
                   <div
                     className={
                       isToday
-                        ? "w-full rounded-t-[3px] bg-navy"
+                        ? "w-full rounded-t-[3px] bg-neutral"
                         : active
-                          ? "w-full rounded-t-[3px] bg-[#1d4ed8]"
-                          : "w-full rounded-t-[3px] bg-primary"
+                          ? "w-full rounded-t-[3px] bg-primary"
+                          : "w-full rounded-t-[3px] bg-primary/70"
                     }
                     style={{ height: day.rent > 0 ? `${Math.max(height, 6)}%` : "2px" }}
                   />
