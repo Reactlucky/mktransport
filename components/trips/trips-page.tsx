@@ -321,6 +321,12 @@ export function TripsPageClient() {
                       <td className="px-4 py-3">
                         <div className="flex justify-end gap-1">
                           <Link
+                            href={`/dashboard/trips/${trip.id}/builty`}
+                            className="rounded-[3px] px-2 py-1.5 text-xs font-medium text-primary hover:bg-accent"
+                          >
+                            Builty
+                          </Link>
+                          <Link
                             href={`/dashboard/trips/${trip.id}/edit`}
                             className="rounded-[3px] px-2 py-1.5 text-xs font-medium text-primary hover:bg-accent"
                           >

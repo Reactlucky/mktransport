@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { advanceWithinFreight } from "@/lib/calculations/builty";
 
 export const truckSchema = z.object({
   registration_number: z
@@ -44,6 +45,43 @@ export const tripSchema = z.object({
   rent: z.coerce.number().min(0, "Rent must be 0 or greater"),
 });
 
+const requiredNumber = (required: string, invalid: string) =>
+  z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.coerce.number({ error: required }).min(0, invalid)
+  );
+
+export const builtySchema = z
+  .object({
+    builty_date: z.string().min(1, "Date is required"),
+    customer_name: z.string().trim().min(1, "Customer name is required").max(120),
+    truck_registration: z
+      .string()
+      .trim()
+      .min(1, "Truck registration is required")
+      .max(20),
+    from_location: z.string().trim().min(1, "From location is required").max(120),
+    to_location: z.string().trim().min(1, "To location is required").max(120),
+    goods_description: z
+      .string()
+      .trim()
+      .min(1, "Goods description is required")
+      .max(500),
+    package_count: z.preprocess(
+      (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+      z.coerce
+        .number({ error: "Packages are required" })
+        .int("Packages must be a whole number")
+        .min(0, "Packages cannot be negative")
+    ),
+    freight_amount: requiredNumber("Freight is required", "Freight must be 0 or greater"),
+    advance_amount: requiredNumber("Advance is required", "Advance must be 0 or greater"),
+  })
+  .refine((value) => advanceWithinFreight(value.freight_amount, value.advance_amount), {
+    message: "Advance cannot be more than freight",
+    path: ["advance_amount"],
+  });
+
 export const loginSchema = z.object({
   username: z
     .string()
@@ -57,4 +95,5 @@ export type TruckInput = z.infer<typeof truckSchema>;
 export type CustomerInput = z.infer<typeof customerSchema>;
 export type DriverInput = z.infer<typeof driverSchema>;
 export type TripInput = z.infer<typeof tripSchema>;
+export type BuiltyInput = z.infer<typeof builtySchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

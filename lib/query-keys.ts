@@ -51,6 +51,9 @@ export const queryKeys = {
     month: (year: number, month: number) =>
       ["salary", "month", year, month] as const,
   },
+  bilties: {
+    byTrip: (tripId: string) => ["bilties", "trip", tripId] as const,
+  },
   reports: {
     all: ["reports"] as const,
     monthly: (year: number, month: number) =>

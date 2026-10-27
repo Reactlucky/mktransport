@@ -65,6 +65,9 @@ export function TripCard({
           )}
         </div>
       </div>
+      <Link href={`/dashboard/trips/${trip.id}/builty`} className="btn btn-outline btn-sm mt-4 w-full">
+        Generate Builty
+      </Link>
     </article>
   );
 }

@@ -137,6 +137,23 @@ export interface PaginatedResult<T> {
   pageSize: number;
 }
 
+export interface Builty {
+  id: string;
+  trip_id: string;
+  builty_number: string;
+  builty_date: string;
+  customer_name: string;
+  truck_registration: string;
+  from_location: string;
+  to_location: string;
+  goods_description: string;
+  package_count: number;
+  freight_amount: number;
+  advance_amount: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface TripFilters {
   search?: string;
   dateFrom?: string;

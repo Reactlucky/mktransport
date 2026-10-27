@@ -31,6 +31,7 @@ const titles: Record<string, string> = {
 function pageTitle(pathname: string) {
   if (titles[pathname]) return titles[pathname];
   if (pathname.includes("/trips/") && pathname.endsWith("/edit")) return "Edit Trip";
+  if (pathname.endsWith("/builty")) return "Builty";
   if (pathname.startsWith("/dashboard/trucks/")) return "Truck";
   if (pathname.startsWith("/dashboard/customers/")) return "Customer";
   if (pathname.startsWith("/dashboard/drivers/")) return "Driver";
